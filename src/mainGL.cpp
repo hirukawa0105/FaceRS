@@ -117,7 +117,7 @@ void display(void)
 		rsAngle_.z = rsAngle.z;
 	}
 	
-	glRotated((int)rsAngle_.z * 3, 1, 0, 0);//U•’²®
+	glRotated((int)rsAngle_.z * 2.5, 1, 0, 0);//U•’²®
 	glRotated((int)rsAngle_.x, 0, 1, 0);
 	glRotated(-(int)rsAngle_.y, 0, 0, 1);
 	
@@ -129,7 +129,7 @@ void display(void)
 	glPopMatrix();
 	//@•â•²‚Ì•`‰æ
 	glPushMatrix();
-	camera.RenderSubAxis(WIDTH, HEIGHT);
+	//camera.RenderSubAxis(WIDTH, HEIGHT);
 	glPopMatrix();
 
 	glutSwapBuffers();
