@@ -204,7 +204,7 @@ void SaveLayout(HWND dialogWindow)
 	GetClientRect(dialogWindow, &layout[0]);
 	ClientToScreen(dialogWindow, (LPPOINT)&layout[0].left);
 	ClientToScreen(dialogWindow, (LPPOINT)&layout[0].right);
-	//GetWindowRect(GetDlgItem(dialogWindow, IDC_PANEL), &layout[1]);
+	GetWindowRect(GetDlgItem(dialogWindow, IDC_PANEL), &layout[1]);
 	GetWindowRect(GetDlgItem(dialogWindow, IDC_STATUS), &layout[2]);
 	for (int i = 0; i < sizeof(controls) / sizeof(controls[0]); ++i)
 		GetWindowRect(GetDlgItem(dialogWindow, controls[i]), &layout[3 + i]);

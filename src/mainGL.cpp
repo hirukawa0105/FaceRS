@@ -156,7 +156,7 @@ void Init(){
 	position[1] = 0.0;
 	position[2] = 0.0;
 	//model = new MODEL("3DScan2.obj");
-	model = new MODEL("3DScan1.obj");
+	model = new MODEL("kettle.obj");
 }
 
 int MainGL::GLmain()
