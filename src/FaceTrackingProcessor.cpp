@@ -11,6 +11,7 @@
 //#include <vld.h>
 extern PXCSession* session;
 extern FaceTrackingRendererManager* renderer;
+extern FaceTrackingRendererManager* renderer2;
 
 extern volatile bool isStopped;
 extern volatile bool isActiveApp;
@@ -183,10 +184,15 @@ void FaceTrackingProcessor::Process(HWND dialogWindow)
     bool isFinishedPlaying = false;
 
     ResetEvent(renderer->GetRenderingFinishedSignal());
+	ResetEvent(renderer2->GetRenderingFinishedSignal());
 
 	renderer->SetSenseManager(senseManager);
     renderer->SetNumberOfLandmarks(config->landmarks.numLandmarks);
     renderer->SetCallback(renderer->SignalProcessor);
+
+	renderer2->SetSenseManager(senseManager);
+	renderer2->SetNumberOfLandmarks(config->landmarks.numLandmarks);
+	renderer2->SetCallback(renderer2->SignalProcessor);
 
     if (!isStopped)
     {
@@ -199,7 +205,8 @@ void FaceTrackingProcessor::Process(HWND dialogWindow)
 
             if (isNotFirstFrame)
             {
-                WaitForSingleObject(renderer->GetRenderingFinishedSignal(), INFINITE);
+                //WaitForSingleObject(renderer->GetRenderingFinishedSignal(), INFINITE);
+				//WaitForSingleObject(renderer2->GetRenderingFinishedSignal(), INFINITE);
             }
 
             if (isFinishedPlaying || isStopped)
@@ -227,6 +234,10 @@ void FaceTrackingProcessor::Process(HWND dialogWindow)
 					renderer->DrawBitmap(sample, config->GetTrackingMode() == PXCFaceConfiguration::FACE_MODE_IR);
 					renderer->SetOutput(m_output);
 					renderer->SignalRenderer();
+
+					renderer2->DrawBitmap(sample, config->GetTrackingMode() == PXCFaceConfiguration::FACE_MODE_IR);
+					renderer2->SetOutput(m_output);
+					renderer2->SignalRenderer();
 					if(!ReleaseMutex(ghMutex))
 					{
 						throw std::exception("Failed to release mutex");

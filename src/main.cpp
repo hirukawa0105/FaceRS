@@ -247,8 +247,10 @@ void RedoLayout(HWND dialogWindow)
 
 static DWORD WINAPI RenderingThread(LPVOID arg)
 {
-	while (true)
+	while (true){
 		renderer->Render();
+		renderer2->Render();
+	}
 }
 
 static DWORD WINAPI ProcessingThread(LPVOID arg)
@@ -338,11 +340,13 @@ INT_PTR CALLBACK MessageLoopThread(HWND dialogWindow, UINT message, WPARAM wPara
 			{
 				EnableWindow(hwndTab, false);
 				renderer->SetRendererType(FaceTrackingRenderer::R2D);
+				renderer2->SetRendererType(FaceTrackingRenderer::R3D);
 			}
 			else if (FaceTrackingUtilities::GetCheckedProfile(dialogWindow) == PXCFaceConfiguration::FACE_MODE_COLOR_PLUS_DEPTH || FaceTrackingUtilities::GetCheckedProfile(dialogWindow) == PXCFaceConfiguration::FACE_MODE_IR)
 			{
 				EnableWindow(hwndTab, true);
 				renderer->SetRendererType(FaceTrackingRenderer::R3D);
+				renderer2->SetRendererType(FaceTrackingRenderer::R3D);
 			}
 			return TRUE;
 		}
@@ -366,6 +370,7 @@ INT_PTR CALLBACK MessageLoopThread(HWND dialogWindow, UINT message, WPARAM wPara
 
 			TabCtrl_SetCurFocus(GetDlgItem(dialogWindow, IDC_TAB), 0);
 			renderer->SetRendererType(FaceTrackingRenderer::R2D);
+			renderer2->SetRendererType(FaceTrackingRenderer::R3D);
 
 			for (int i = 0;i < GetMenuItemCount(menu1); ++i)
 				EnableMenuItem(menu1, i, MF_BYPOSITION | MF_GRAYED);
@@ -423,6 +428,7 @@ INT_PTR CALLBACK MessageLoopThread(HWND dialogWindow, UINT message, WPARAM wPara
 				}
 			}
 			renderer->Reset();
+			renderer2->Reset();
 			return TRUE;
 
 		case ID_MODE_LIVE:
@@ -451,6 +457,7 @@ INT_PTR CALLBACK MessageLoopThread(HWND dialogWindow, UINT message, WPARAM wPara
 				CheckMenuItem(menu1, ID_VIEW_EYEWEAR, MF_UNCHECKED);
 				ShowWindow(GetDlgItem(dialogWindow, IDC_DISTANCES), SW_HIDE);
 				renderer->SetActivateEyeCenterCalculations(false);
+				renderer2->SetActivateEyeCenterCalculations(false);
 			}
 			else
 			{
@@ -458,6 +465,7 @@ INT_PTR CALLBACK MessageLoopThread(HWND dialogWindow, UINT message, WPARAM wPara
 				ShowWindow(GetDlgItem(dialogWindow, IDC_DISTANCES), SW_SHOW);
 				Button_Enable(GetDlgItem(dialogWindow, IDC_DISTANCES), true);
 				renderer->SetActivateEyeCenterCalculations(true); 
+				renderer2->SetActivateEyeCenterCalculations(true);
 			}
 			return TRUE;
 
@@ -473,6 +481,7 @@ INT_PTR CALLBACK MessageLoopThread(HWND dialogWindow, UINT message, WPARAM wPara
 			return TRUE;
 		case IDC_DISTANCES:
 			renderer->DrawDistances();
+			renderer2->DrawDistances();
 			return TRUE;
 		} 
 		break;
@@ -494,6 +503,7 @@ INT_PTR CALLBACK MessageLoopThread(HWND dialogWindow, UINT message, WPARAM wPara
 				if (iPage == 0)
 				{
 					renderer->SetRendererType(FaceTrackingRenderer::R2D);
+					renderer2->SetRendererType(FaceTrackingRenderer::R3D);
 				}
 				if (iPage == 1 && (wcsstr(deviceName, L"3D") || FaceTrackingUtilities::GetPlaybackState(dialogWindow)) &&
 					(FaceTrackingUtilities::GetCheckedProfile(dialogWindow) == PXCFaceConfiguration::FACE_MODE_COLOR_PLUS_DEPTH
@@ -599,6 +609,7 @@ int RealSenseInit(HINSTANCE hInstance){
 		return 1;
 	}
 	renderer = new FaceTrackingRendererManager(renderer2D, renderer3D);
+	renderer2 = new FaceTrackingRendererManager(renderer2D, renderer3D);
 	if (renderer == NULL)
 	{
 		MessageBoxW(0, L"Failed to create renderer manager", L"Face Viewer", MB_ICONEXCLAMATION | MB_OK);
@@ -619,6 +630,7 @@ int RealSenseInit(HINSTANCE hInstance){
 	if (iPage == 0)
 	{
 		renderer->SetRendererType(FaceTrackingRenderer::R2D);
+		renderer2->SetRendererType(FaceTrackingRenderer::R3D);
 	}
 	if (iPage == 1)
 	{
@@ -645,6 +657,7 @@ int RealSenseInit(HINSTANCE hInstance){
 	}
 
 	CloseHandle(renderer->GetRenderingFinishedSignal());
+	CloseHandle(renderer2->GetRenderingFinishedSignal());
 
 	if (processor)
 		delete processor;
