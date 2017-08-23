@@ -10,7 +10,7 @@ FaceTrackingRenderer2D::~FaceTrackingRenderer2D()
 {
 }
 
-FaceTrackingRenderer2D::FaceTrackingRenderer2D(HWND window) : FaceTrackingRenderer(window) , bActivateEyeCenterCalculations(false)
+FaceTrackingRenderer2D::FaceTrackingRenderer2D(HWND window, int outputPanelID) : FaceTrackingRenderer(window, outputPanelID), bActivateEyeCenterCalculations(false)
 {
 	Reset();
 }
@@ -56,7 +56,7 @@ void FaceTrackingRenderer2D::DrawBitmap(PXCCapture::Sample* sample, bool ir)
 	PXCImage::ImageData data;
 	if (image->AcquireAccess(PXCImage::ACCESS_READ, PXCImage::PIXEL_FORMAT_RGB32, &data) >= PXC_STATUS_NO_ERROR)
 	{
-		HWND hwndPanel = GetDlgItem(m_window, IDC_PANEL);
+		HWND hwndPanel = GetDlgItem(m_window, IDC_PANEL2);
 		HDC dc = GetDC(hwndPanel);
 		BITMAPINFO binfo;
 		memset(&binfo, 0, sizeof(binfo));
@@ -81,7 +81,7 @@ void FaceTrackingRenderer2D::DrawDistances()
 	if(headWidthAvg == 0)
 		return;
 
-	HWND panelWindow = GetDlgItem(m_window, IDC_PANEL);
+	HWND panelWindow = GetDlgItem(m_window, IDC_PANEL2);
 	HDC dc1 = GetDC(panelWindow);
 	HDC dc2 = CreateCompatibleDC(dc1);
 	if (!dc2) 
@@ -132,7 +132,7 @@ void FaceTrackingRenderer2D::DrawRecognition(PXCFaceData::Face* trackedFace, con
 	if(recognitionData == NULL)
 		return;
 
-	HWND panelWindow = GetDlgItem(m_window, IDC_PANEL);
+	HWND panelWindow = GetDlgItem(m_window, IDC_PANEL2);
 	HDC dc1 = GetDC(panelWindow);
 
 	if (!dc1)
@@ -200,7 +200,7 @@ void FaceTrackingRenderer2D::DrawExpressions(PXCFaceData::Face* trackedFace, con
 	if (!expressionsData)
 		return;
 
-	HWND panelWindow = GetDlgItem(m_window, IDC_PANEL);
+	HWND panelWindow = GetDlgItem(m_window, IDC_PANEL2);
 	HDC dc1 = GetDC(panelWindow);
 	HDC dc2 = CreateCompatibleDC(dc1);
 	if (!dc2) 
@@ -264,7 +264,7 @@ void FaceTrackingRenderer2D::DrawPoseAndPulse(PXCFaceData::Face* trackedFace, co
 	else
 		poseAnglesExist = poseData->QueryPoseAngles(&angles);
 
-	HWND panelWindow = GetDlgItem(m_window, IDC_PANEL);
+	HWND panelWindow = GetDlgItem(m_window, IDC_PANEL2);
 	HDC dc1 = GetDC(panelWindow);
 	HDC dc2 = CreateCompatibleDC(dc1);
 	if (!dc2) 
@@ -375,7 +375,7 @@ void FaceTrackingRenderer2D::DrawLine(PXCFaceData::Face* trackedFace){
 	if (landmarkData == NULL)
 		return;
 
-	HWND panelWindow = GetDlgItem(m_window, IDC_PANEL);
+	HWND panelWindow = GetDlgItem(m_window, IDC_PANEL2);
 	HDC dc1 = GetDC(panelWindow);
 	HDC dc2 = CreateCompatibleDC(dc1);
 
@@ -505,7 +505,7 @@ void FaceTrackingRenderer2D::DrawLandmark(PXCFaceData::Face* trackedFace)
 	if (landmarkData == NULL)
 		return;
 
-	HWND panelWindow = GetDlgItem(m_window, IDC_PANEL);
+	HWND panelWindow = GetDlgItem(m_window, IDC_PANEL2);
 	HDC dc1 = GetDC(panelWindow);
 	HDC dc2 = CreateCompatibleDC(dc1);
 
@@ -610,7 +610,7 @@ void FaceTrackingRenderer2D::DrawLocation(PXCFaceData::Face* trackedFace)
 	if (detectionData == NULL) 
 		return;	
 
-	HWND panelWindow = GetDlgItem(m_window, IDC_PANEL);
+	HWND panelWindow = GetDlgItem(m_window, IDC_PANEL2);
 	HDC dc1 = GetDC(panelWindow);
 	HDC dc2 = CreateCompatibleDC(dc1);
 

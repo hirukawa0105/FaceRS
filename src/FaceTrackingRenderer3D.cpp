@@ -37,10 +37,10 @@ FaceTrackingRenderer3D::~FaceTrackingRenderer3D()
 {
 }
 
-FaceTrackingRenderer3D::FaceTrackingRenderer3D(HWND window, PXCSession* session, MainGL* GL) : FaceTrackingRenderer(window), m_session(session)
+FaceTrackingRenderer3D::FaceTrackingRenderer3D(HWND window, PXCSession* session, MainGL* GL, int outputPanelID) : FaceTrackingRenderer(window, outputPanelID), m_session(session)
 {
 	throwGL = *GL;
-	//目や鼻のリストにに空ポイントを挿入
+	//目や鼻のリストに空ポイントを挿入
 	for (int i = 0; i < 8; i++){
 		leftEyeList.push_back(Point2(0, 0));
 		rightEyeList.push_back(Point2(0, 0));

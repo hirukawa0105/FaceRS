@@ -9,11 +9,12 @@ FaceTrackingRenderer::~FaceTrackingRenderer()
 		delete[] m_landmarkPoints;
 }
 
-FaceTrackingRenderer::FaceTrackingRenderer(HWND window) : m_window(window)
+FaceTrackingRenderer::FaceTrackingRenderer(HWND window,int outputPanelID) : m_window(window)
 {
 	m_landmarkPoints = NULL;
 	m_senseManager = NULL;
 	m_expressionMap = InitExpressionsMap();
+	PanelID = outputPanelID;
 }
 
 void FaceTrackingRenderer::SetOutput(PXCFaceData* output)
@@ -55,7 +56,7 @@ void FaceTrackingRenderer::RefreshUserInterface()
 {
 	if (!m_bitmap) return;
 
-	HWND panel = GetDlgItem(m_window, IDC_PANEL);
+	HWND panel = GetDlgItem(m_window, PanelID);
 	RECT rc;
 	GetClientRect(panel, &rc);
 
