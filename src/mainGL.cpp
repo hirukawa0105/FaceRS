@@ -4,6 +4,9 @@
 #include "mouse.h"
 #include "mainGL.h"
 
+// ウィンドウ関連の処理
+#include "Window.h"
+
 #define WIDTH 640
 #define HEIGHT 480
 #define PI  3.14159265358979323846264338327
@@ -167,8 +170,113 @@ void Init(){
 	model = new MODEL("kettle.obj");
 }
 
+//
+// メインプログラム
+//
+int FWmain()
+{
+	// GLFW を初期化する
+	if (glfwInit() == GL_FALSE)
+	{
+		// GLFW の初期化に失敗した
+		std::cerr << "Failed to initialize GLFW." << std::endl;
+		return EXIT_FAILURE;
+	}
+
+	// プログラム終了時には GLFW を終了する
+	atexit(glfwTerminate);
+
+	// OpenGL Version 3.2 Core Profile を選択する
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+	// ウィンドウを開く
+	Window window(640, 480, "Mesh Sample");
+	if (!window.get())
+	{
+		// ウィンドウが作成できなかった
+		std::cerr << "Can't open GLFW window." << std::endl;
+		return EXIT_FAILURE;
+	}
+
+	// 頂点数
+	const auto vertices(slices * stacks);
+
+	// 頂点位置
+	GLfloat position[stacks][slices][3];
+	for (auto v = 0; v < stacks; ++v)
+	{
+		for (auto u = 0; u < slices; ++u)
+		{
+			const auto x((GLfloat(u) / GLfloat(slices - 1) - 0.5f) * GLfloat(slices) / GLfloat(stacks));
+			const auto y((GLfloat(v) / GLfloat(stacks - 1) - 0.5f));
+
+			position[v][u][0] = x;
+			position[v][u][1] = y;
+			position[v][u][2] = 0.0f;
+		}
+	}
+
+	// 頂点配列オブジェクト
+	GLuint vao;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
+	// 頂点位置を格納する頂点バッファオブジェクト
+	GLuint positionBuffer;
+	glGenBuffers(1, &positionBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, positionBuffer);
+
+	// この頂点バッファオブジェクトのメモリを確保する
+	glBufferData(GL_ARRAY_BUFFER, sizeof position, position, GL_STATIC_DRAW);
+
+	// この頂点バッファオブジェクトを 0 番の attribute 変数から取り出す
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(0);
+
+	// この頂点配列オブジェクトの結合を解除する
+	glBindVertexArray(0);
+
+	// メッシュ描画用のシェーダ
+	const auto point(ggLoadShader("point.vert", "point.frag"));
+	const auto mcLoc(glGetUniformLocation(point, "mc"));
+
+	// 背景色を設定する
+	glClearColor(background[0], background[1], background[2], background[3]);
+
+	// 隠面消去処理を有効にする
+	glEnable(GL_DEPTH_TEST);
+
+	// ウィンドウが開いている間くり返し描画する
+	while (!window.shouldClose())
+	{
+		// 画面消去
+		window.clear();
+
+		// シェーダの指定
+		glUseProgram(point);
+		glUniformMatrix4fv(mcLoc, 1, GL_FALSE, (window.getMp() * window.getMv()).get());
+
+		// 描画
+		glBindVertexArray(vao);
+		glDrawArrays(GL_POINTS, 0, vertices);
+
+		// バッファを入れ替える
+		window.swapBuffers();
+	}
+
+	// 頂点配列オブジェクトを削除する
+	glDeleteVertexArrays(1, &vao);
+
+	// 頂点バッファオブジェクトを削除する
+	glDeleteBuffers(1, &positionBuffer);
+}
+
 int MainGL::GLmain()
 {
+	FWmain();
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(WIDTH, HEIGHT);
 	//glutInit(&argc, argv);
