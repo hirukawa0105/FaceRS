@@ -38,6 +38,9 @@ Point3f glXAxis(1, 0, 0);
 Point3f glYAxis(0, 1, 0);
 Point3f glZAxis(0, 0, 1);
 
+// メッシュの列数と行数
+const auto slices(16), stacks(12);
+
 MainGL::MainGL(){
 }
 
@@ -83,6 +86,11 @@ void SetDist(float dist)
 		0.0, 0.0, 1.4,//カメラ位置は固定
 		model->centerPoint.x, model->centerPoint.y, model->centerPoint.z,
 		0,1,0);
+
+}
+
+void drawPoint(void){
+
 
 }
 

@@ -588,13 +588,13 @@ int RealSenseInit(HINSTANCE hInstance){
 	SendMessage(statusWindow, SB_SETTEXT, (WPARAM)(INT)0, (LPARAM)(LPSTR)TEXT("OK"));
 	UpdateWindow(dialogWindow);
 
-	HWND hwndTab = CreateTabControl(dialogWindow, hInstance);
+	/*HWND hwndTab = CreateTabControl(dialogWindow, hInstance);
 	if (!hwndTab)
 	{
 		MessageBoxW(0, L"Failed to create tab control", L"Face Viewer", MB_ICONEXCLAMATION | MB_OK);
 		return 1;
 	}
-
+*/
 	FaceTrackingRenderer2D* renderer2D = new FaceTrackingRenderer2D(dialogWindow,IDC_PANEL2);
 	if (renderer2D == NULL)
 	{
@@ -626,7 +626,7 @@ int RealSenseInit(HINSTANCE hInstance){
 		return 1;
 	}
 
-	int iPage = TabCtrl_GetCurSel(hwndTab);
+	/*int iPage = TabCtrl_GetCurSel(hwndTab);
 	if (iPage == 0)
 	{
 		renderer->SetRendererType(FaceTrackingRenderer::R2D);
@@ -635,7 +635,7 @@ int RealSenseInit(HINSTANCE hInstance){
 	if (iPage == 1)
 	{
 		renderer->SetRendererType(FaceTrackingRenderer::R3D);
-	}
+	}*/
 
 	//デバックコンソール出力
 	DispConsole();
