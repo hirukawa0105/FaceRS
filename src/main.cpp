@@ -416,6 +416,7 @@ INT_PTR CALLBACK MessageLoopThread(HWND dialogWindow, UINT message, WPARAM wPara
 				Button_Enable(GetDlgItem(dialogWindow, ID_START), true);
 				Button_Enable(GetDlgItem(dialogWindow, ID_STOP), false);
 				Button_Enable(GetDlgItem(dialogWindow, IDC_LOCATION), true);
+				Button_Enable(GetDlgItem(dialogWindow, IDC_LINE), true);
 				Button_Enable(GetDlgItem(dialogWindow, IDC_LANDMARK), true);
 				Button_Enable(GetDlgItem(dialogWindow, IDC_RECOGNITION), true);
 				deviceName = FaceTrackingUtilities::GetCheckedDevice(dialogWindow);

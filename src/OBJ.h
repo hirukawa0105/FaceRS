@@ -1,4 +1,5 @@
 #include "PNG.h"
+#include "mainGL.h"
 
 using namespace std;
 //3つのベクトル
@@ -83,11 +84,13 @@ public:
 	MODEL();
 	MODEL(char* FileName);//コンストラクタ
 	bool OBJ_Load(char* FileName);//ロード
+	bool VertexLoad(std::vector<Point3f> &points);//点群ロード
 	void Draw();
 	void RealSenseDraw();
 	vector <Vector3f> objVertex;//3次元点
 	Vector3f centerPoint;
 	void calcCenter();
+	std::vector<Point3f> rsVertex;
 	// カラー配列情報
 	
 
@@ -150,23 +153,16 @@ void MODEL::RealSenseDraw(){
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	//glEnableClientState(GL_COLOR_ARRAY);
-	for (int i = 0; i<(signed)Material.size(); i++){
 
-		glPushMatrix();
-		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, (const GLfloat *)&Material[i].MaterialColor.ambient);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, (const GLfloat *)&Material[i].MaterialColor.diffuse);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, (const GLfloat *)&Material[i].MaterialColor.specular);
-		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, Material[i].Shininess);
+	GLfloat temp[3];
 
-		if (Material[i].Tridata.size()>1){
+	for (int i=0; i < rsVertex.size(); ++i){
+		temp[0] = rsVertex.at(i).x; temp[1] = rsVertex.at(i).y; temp[2] = rsVertex.at(i).z;
 
-			glNormalPointer(GL_FLOAT, sizeof(Tri), &Material[i].Tridata[0].TriNor.x);
-			glVertexPointer(3, GL_FLOAT, sizeof(Tri), &Material[i].Tridata[0].TriVer.x);
-			//glColorPointer(4, GL_FLOAT, sizeof(Tri), &Material[i].Tridata[0].TriColor);
-			if (Material[i].TexNo>0)glTexCoordPointer(2, GL_FLOAT, sizeof(Tri), &Material[i].Tridata[0].TriUV.u);
-			glDrawArrays(GL_TRIANGLES, 0, Material[i].Tridata.size());
-		}
-		glPopMatrix();
+		printf("%f\n", temp[1]);
+		glVertexPointer(3, GL_FLOAT, sizeof(Point3f), temp);
+		//glColorPointer(4, GL_FLOAT, sizeof(Tri), &Material[i].Tridata[0].TriColor);
+		glDrawArrays(GL_POINTS,0, 1);
 	}
 
 	glDisableClientState(GL_COLOR_ARRAY);
@@ -289,6 +285,109 @@ bool MODEL::OBJ_Load(char* FileName){
 	uv.clear();
 	return true;
 }
+
+bool MODEL::VertexLoad(vector<Point3f> &points){
+	//Vector4I Face[3];//一時代入用
+	//vector <Vector3f> Vertex;//頂点
+	//vector <Vector3f> Normal;//法線
+	//vector <UV> uv;//UV
+
+	rsVertex.clear();
+
+	for (int i = 0; i < points.size();++i){
+		rsVertex.push_back(points.at(i));
+	}
+
+	/*fscanf_s(fp, "%f %f %f", &vec3d.x, &vec3d.y, &vec3d.z);
+	Vertex.push_back(vec3d);*/
+	//	}
+	//	//法線
+	//	if (strcmp(key, "vn") == 0){
+	//		//fscanf_s(fp, "%f %f %f", &vec3d.x, &vec3d.y, &vec3d.z);
+	//		fscanf_s(fp, "%f %f %f", &vec3d.x, &vec3d.y, &vec3d.z);
+	//		//vec3d.x = 0; vec3d.y = 0; vec3d.z = -1;
+	//		Normal.push_back(vec3d);
+	//	}
+	//	//テクスチャ
+	//	if (strcmp(key, "vt") == 0){
+	//		fscanf_s(fp, "%f %f", &vec2d.u, &vec2d.v);
+	//		uv.push_back(vec2d);
+	//	}
+	//	//マテリアルセット
+	//	if (strcmp(key, "usemtl") == 0){
+	//		fscanf_s(fp, "%s ", key, sizeof(key));
+	//		for (int i = 0; i<(signed)Material.size(); i++){
+	//			if (strcmp(key, Material[i].MaterialName.c_str()) == 0)Material_No = i;
+	//		}
+	//	}
+	//	//面のインデックス 0=頂点 1=UV 2=法線
+	//	if (strcmp(key, "f") == 0){
+	//		Face[0].w = -1;
+	//		Face[1].w = -1;
+	//		Face[2].w = -1;
+	//		fscanf_s(fp, "%d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d", &Face[0].x, &Face[1].x, &Face[2].x, &Face[0].y, &Face[1].y, &Face[2].y, &Face[0].z, &Face[1].z, &Face[2].z, &Face[0].w, &Face[1].w, &Face[2].w);
+	//		if ((Face[0].w == -1) && (Face[1].w == -1) && (Face[2].w == -1)){
+	//			//三角面
+	//			Material[Material_No].TriVerID.push_back(Face[0].x - 1);
+	//			Material[Material_No].TriVerID.push_back(Face[0].y - 1);
+	//			Material[Material_No].TriVerID.push_back(Face[0].z - 1);
+	//			Material[Material_No].TriUVID.push_back(Face[1].x - 1);
+	//			Material[Material_No].TriUVID.push_back(Face[1].y - 1);
+	//			Material[Material_No].TriUVID.push_back(Face[1].z - 1);
+	//			Material[Material_No].TriNorID.push_back(Face[2].x - 1);
+	//			Material[Material_No].TriNorID.push_back(Face[2].y - 1);
+	//			Material[Material_No].TriNorID.push_back(Face[2].z - 1);
+	//		}
+	//		else{
+	//			//四角面
+	//			Material[Material_No].QuadVerID.push_back(Face[0].x - 1);
+	//			Material[Material_No].QuadVerID.push_back(Face[0].y - 1);
+	//			Material[Material_No].QuadVerID.push_back(Face[0].z - 1);
+	//			Material[Material_No].QuadVerID.push_back(Face[0].w - 1);
+	//			Material[Material_No].QuadUVID.push_back(Face[1].x - 1);
+	//			Material[Material_No].QuadUVID.push_back(Face[1].y - 1);
+	//			Material[Material_No].QuadUVID.push_back(Face[1].z - 1);
+	//			Material[Material_No].QuadUVID.push_back(Face[1].w - 1);
+	//			Material[Material_No].QuadNorID.push_back(Face[2].x - 1);
+	//			Material[Material_No].QuadNorID.push_back(Face[2].y - 1);
+	//			Material[Material_No].QuadNorID.push_back(Face[2].z - 1);
+	//			Material[Material_No].QuadNorID.push_back(Face[2].w - 1);
+	//		}
+	//	}
+	//}
+	//for (int j = 0; j<(signed)Material.size(); j++){
+	//	for (int i = 0; i<(signed)Material[j].TriVerID.size(); i++){
+	//		Tri.TriVer = Vertex[Material[j].TriVerID[i]];
+	//		Tri.TriNor = Normal[Material[j].TriNorID[i]];
+	//		Tri.TriUV = uv[Material[j].TriUVID[i]];
+	//		Color4 temp; temp.r = 0.1f; temp.g = 1; temp.b = 1; temp.a = 1;
+	//		Tri.TriColor = temp;
+	//		Material[j].Tridata.push_back(Tri);
+	//	}
+	//	for (int i = 0; i<(signed)Material[j].QuadVerID.size(); i++){
+	//		Quad.QuadVer = Vertex[Material[j].QuadVerID[i]];
+	//		Quad.QuadNor = Normal[Material[j].QuadNorID[i]];
+	//		Quad.QuadUV = uv[Material[j].QuadUVID[i]];
+	//		Material[j].Quaddata.push_back(Quad);
+	//	}
+	//	Material[j].TriVerID.clear();
+	//	Material[j].TriNorID.clear();
+	//	Material[j].TriUVID.clear();
+	//	Material[j].QuadVerID.clear();
+	//	Material[j].QuadNorID.clear();
+	//	Material[j].QuadUVID.clear();
+	//}
+
+	//copy(Vertex.begin(), Vertex.end(), back_inserter(objVertex));
+	//calcCenter();
+	//Vertex.clear();
+	//Normal.clear();
+	//uv.clear();
+	return true;
+}
+
+
+
 bool MODEL::LoadMaterialFromFile(char* FileName){
 	FILE* fp = NULL;
 	fopen_s(&fp, FileName, "rt");

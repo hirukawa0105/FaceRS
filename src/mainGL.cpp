@@ -86,10 +86,10 @@ void SetDist(float dist)
 	cout << "y:" << position[1];
 	cout << "z:" << position[2] << endl;*/
 	//Å@éãì_à íuÇÃê›íË
-	gluLookAt(
-		0.0, 0.0, 1.4,//ÉJÉÅÉâà íuÇÕå≈íË
-		model->centerPoint.x, model->centerPoint.y, model->centerPoint.z,
-		0,1,0);
+	
+
+
+	//gluLookAt(0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
 }
 
@@ -114,6 +114,9 @@ GLfloat Color[6][4][3] = {
 	{ { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f } },//ê¬
 	{ { 0.0f, 1.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 1.0f, 0.0f } },//óŒ
 };
+
+GLfloat Vertex2[3] = { 0, 0, 0 };
+
 void DrawArray(void)
 {
 	//óLå¯âª
@@ -132,6 +135,22 @@ void DrawArray(void)
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	std::vector<Point3f> temp;
+	float a = -0.1f;
+	for (int i = 0; i < 100; ++i){
+
+		a += 0.1f;
+		GLfloat Vertex2[3] = { a, a, a };
+
+		glVertexPointer(3, GL_FLOAT, 0, Vertex2);//ç¿ïW
+		glDrawArrays(GL_POINTS, 0, 1);
+	}
+	
+	glDisableClientState(GL_VERTEX_ARRAY);
+
+
 }
 void display2(void)
 {
@@ -145,11 +164,12 @@ void display2(void)
 	gluLookAt(0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
 	//hoge += 0.1;
-	glRotatef(hoge, 1.0f, 0.0f, 0.0f);//âÒì]
-	glRotatef(hoge, 0.0f, 1.0f, 0.0f);//âÒì]
+	//glRotatef(hoge, 1.0f, 0.0f, 0.0f);//âÒì]
+	//glRotatef(hoge, 0.0f, 1.0f, 0.0f);//âÒì]
 
-	DrawArray();
-
+	//DrawArray();
+	model->Draw();
+	rightEye->RealSenseDraw();
 	glutSwapBuffers();
 }
 
@@ -161,16 +181,20 @@ void display(void)
 	glViewport(0, 0, WIDTH, HEIGHT);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(30.0, WIDTH / HEIGHT, 0.1, 2000.0);
+	gluPerspective(30.0, WIDTH / HEIGHT, 0.1, 200.0);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	
 
+	//gluLookAt(0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	gluLookAt(
+		0.0, 0.0, 1.4,//ÉJÉÅÉâà íuÇÕå≈íË
+		model->centerPoint.x, model->centerPoint.y, model->centerPoint.z,
+		0, 1, 0);
 	hoge++;
 	glPushMatrix();
 	glTranslated(model->centerPoint.x,model->centerPoint.y, model->centerPoint.z);
-	SetDist(1);
 	
+	//SetDist(1);
 	if (hoge % 2 == 0){
 
 		//cout << (int)rsAngle.x << " " << (int)rsAngle.y << " " << (int)rsAngle.z << endl;
@@ -202,6 +226,13 @@ void display(void)
 	glPopMatrix();
 	//Å@ï‚èïé≤ÇÃï`âÊ
 	glPushMatrix();
+
+					/***í≤êÆ***/
+	glTranslated(model->centerPoint.x, model->centerPoint.y,0);
+	glRotated(30, 1, 0, 0);//êUïùí≤êÆ
+	rightEye->RealSenseDraw();
+					/***í≤êÆ***/
+	
 	//camera.RenderSubAxis(WIDTH, HEIGHT);
 	glPopMatrix();
 
@@ -232,6 +263,16 @@ void Init(){
 	position[2] = 0.0;
 	//model = new MODEL("3DScan2.obj");
 	model = new MODEL("kettle.obj");
+
+	rightEye = new MODEL();
+	/*std::vector<Point3f> temp;
+	float a=-2.1f;
+	for (int i = 0; i < 100;++i){
+
+		a += 0.1f;
+		temp.push_back(Point3f(a,a,-a));
+	}
+	*/
 }
 
 //
@@ -366,7 +407,11 @@ int MainGL::GLmain()
 	return 0;
 }
 
-void MainGL::SetRightEye(std::vector<Point3f> trans){
+void MainGL::SetRightEye(std::vector<Point3f> &points){
+
+	rightEye->VertexLoad(points);
+	points.clear();
+	//enableCalc = false;
 
 }
 
@@ -409,6 +454,10 @@ void MainGL::SetAngle(Point3f xAxis, Point3f yAxis, Point3f zAxis){
 
 void MainGL::SetTrans(Point3f trans){
 	rsTrans = trans;
+}
+
+bool MainGL::GetCalcDuring(){
+	return enableCalc;
 }
 
 

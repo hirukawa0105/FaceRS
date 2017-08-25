@@ -144,6 +144,9 @@ void FaceTrackingRenderer3D::DrawBitmap(PXCCapture::Sample* sample, bool ir)
 	assert(m_outputImage);
 
 	PXCImage::ImageData imageDepthData;
+
+	bool start;
+	Point3f temp;
 	if (imageDepth->AcquireAccess(PXCImage::ACCESS_READ, PXCImage::PIXEL_FORMAT_RGB32, &imageDepthData) >= PXC_STATUS_NO_ERROR)
 	{
 		memset(&m_outputImageData, 0, sizeof(m_outputImageData));
@@ -227,6 +230,9 @@ void FaceTrackingRenderer3D::DrawBitmap(PXCCapture::Sample* sample, bool ir)
 					if (PointInPolygon(Point2(ix, iy), rightEyeList) || PointInPolygon(Point2(ix, iy), leftEyeList)||
 						PointInPolygon(Point2(ix, iy), noseList) || PointInPolygon(Point2(ix, iy), mouthList)){
 						depth =v.z / 3;
+						temp.x = v.x / 1000; temp.y = v.y / 1000; temp.z = v.z / 1000;
+						rightEyeDepth.push_back(temp);
+						start = true;
 					}
 					else{
 						depth = 0;
@@ -236,15 +242,15 @@ void FaceTrackingRenderer3D::DrawBitmap(PXCCapture::Sample* sample, bool ir)
 					ptr[2] = pxcBYTE(-depth);
 					ptr[3] = pxcBYTE(255.0f);
 
-					//ç¿ïWÇopenGLÇ÷ìnÇ∑
-					if (PointInPolygon(Point2(ix, iy), rightEyeList)){
-
-					}
+					
 				}
 
 				numVertices++;
 			}
 		}
+
+		throwGL.SetRightEye(rightEyeDepth);
+
 
 		if (vertices) delete[] vertices;
 
