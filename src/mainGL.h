@@ -22,6 +22,7 @@ public:
 	int GLmain();
 	void SetAngle(Point3f xAxis, Point3f yAxis, Point3f zAxis);
 	void SetTrans(Point3f trans);
+	void SetRightEye(std::vector<Point3f> trans);
 	//float CalcDot(Point3f vec1, Point3f vec2);
 	//Point3f CalcCross(Point3f vec1, Point3f vec2);
 };

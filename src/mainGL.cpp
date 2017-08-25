@@ -12,6 +12,7 @@
 #define PI  3.14159265358979323846264338327
 
 MODEL* model;
+MODEL* rightEye;
 ViewCamera camera(1.0);
 
 void Keyboard(unsigned char key, int x, int y);
@@ -29,7 +30,7 @@ Point3f CalcCross(Point3f vec1, Point3f vec2);
 float CalcTwoVectorAngle(Point3f vec1, Point3f vec2);
 Point3f CalcUnitVec(Point3f vec);
 
-int hoge;
+int hoge=0;
 float position[3];
 float angle[3];
 Point3f rsAngle;//物体の回転角度
@@ -72,7 +73,7 @@ void SetDist(float dist)
 {
 	double zoom = dist;
 	zoom += camera.right.current.y / 5.0;
-
+	
 	
 	/*angle[0] = camera.angle[0];
 	angle[1] = camera.angle[1];
@@ -97,8 +98,65 @@ void drawPoint(void){
 
 }
 
+//頂点データ 3面を4頂点で作成する 1頂点はx,y,zの3要素
+GLfloat Vertex[3][4][3] = {
+	{ { 1.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.5f }, { 0.0f, 1.0f, 0.5f }, { 0.0f, 1.0f, 0.0f } },//1枚目
+	{ { 1.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.5f }, { -1.0f, 0.0f, 0.5f }, { -1.0f, 0.0f, 0.0f } },//2枚目
+	{ { -1.0f, 0.0f, 0.0f }, { -1.0f, 0.0f, 0.5f }, { 0.0f, 1.0f, 0.5f }, { 0.0f, 1.0f, 0.0f } },//3枚目
+};
+GLfloat Normal[6][4][3] = {
+	{ { 1.0f, 0.5f, 0.0f }, { 1.0f, 0.5f, 0.0f }, { 1.0f, 0.5f, 0.0f }, { 1.0f, 0.5f, 0.0f } },//右上
+	{ { 0.0f, -1.0f, 0.0f }, { 0.0f, -1.0f, 0.0f }, { 0.0f, -1.0f, 0.0f }, { 0.0f, -1.0f, 0.0f } },//下
+	{ { -1.0f, 0.5f, 0.0f }, { -1.0f, 0.5f, 0.0f }, { -1.0f, 0.5f, 0.0f }, { -1.0f, 0.5f, 0.0f } },//左上
+};
+GLfloat Color[6][4][3] = {
+	{ { 1.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.0f } },//赤
+	{ { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f } },//青
+	{ { 0.0f, 1.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 1.0f, 0.0f } },//緑
+};
+void DrawArray(void)
+{
+	//有効化
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_COLOR_ARRAY);
+
+	//データの関連付け
+	glVertexPointer(3, GL_FLOAT, 0, Vertex);//座標
+	glNormalPointer(GL_FLOAT, 0, Normal);//法線
+	glColorPointer(3, GL_FLOAT, 0, Color);//色
+
+	glDrawArrays(GL_TRIANGLES, 0, 4 * 3); //描画(4頂点*3面)
+
+	//無効化
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_COLOR_ARRAY);
+}
+void display2(void)
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glViewport(0, 0, WIDTH, HEIGHT);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(30.0, WIDTH / HEIGHT, 0.1, 200.0);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	gluLookAt(0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+
+	//hoge += 0.1;
+	glRotatef(hoge, 1.0f, 0.0f, 0.0f);//回転
+	glRotatef(hoge, 0.0f, 1.0f, 0.0f);//回転
+
+	DrawArray();
+
+	glutSwapBuffers();
+}
+
 void display(void)
 {
+
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glViewport(0, 0, WIDTH, HEIGHT);
 	glMatrixMode(GL_PROJECTION);
@@ -106,12 +164,13 @@ void display(void)
 	gluPerspective(30.0, WIDTH / HEIGHT, 0.1, 2000.0);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	SetDist(1);
+	
 
 	hoge++;
 	glPushMatrix();
 	glTranslated(model->centerPoint.x,model->centerPoint.y, model->centerPoint.z);
-
+	SetDist(1);
+	
 	if (hoge % 2 == 0){
 
 		//cout << (int)rsAngle.x << " " << (int)rsAngle.y << " " << (int)rsAngle.z << endl;
@@ -121,7 +180,7 @@ void display(void)
 		//cout <<"Axis:"<< rsAxis[1].x << " " << rsAxis[1].y << " " << rsAxis[1].z << endl;
 	}
 
-	if (hoge % 4 == 0){//1frame毎に回転させると挙動不審な動きをするため間隔をあけて更新
+	if (hoge % 3 == 0){//1frame毎に回転させると挙動不審な動きをするため間隔をあけて更新
 
 		rsAngle_.x = rsAngle.x;
 		rsAngle_.y = rsAngle.y;
@@ -136,7 +195,10 @@ void display(void)
 
 	glTranslated(-model->centerPoint.x, -model->centerPoint.y, -model->centerPoint.z);
 	glTranslated(rsTrans.x/1000, rsTrans.y/1000, 0);
+
 	model->Draw();
+
+
 	glPopMatrix();
 	//　補助軸の描画
 	glPushMatrix();
@@ -148,6 +210,7 @@ void display(void)
 void idle(void)
 {
 	//angle += 2.0f;
+	hoge += 2;
 	Sleep(1);
 	glutPostRedisplay();
 }
@@ -156,9 +219,10 @@ void Init(){
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_LIGHT0);
-	glEnable(GL_LIGHTING);
+	/*glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHTING);*/
 	glEnable(GL_CULL_FACE);
+	
 	//glCullFace(GL_BACK);
 	angle[0] = DegToRad(45.0);
 	angle[1] = DegToRad(45.0);
@@ -249,6 +313,8 @@ int FWmain()
 	// 隠面消去処理を有効にする
 	glEnable(GL_DEPTH_TEST);
 
+	Init();
+
 	// ウィンドウが開いている間くり返し描画する
 	while (!window.shouldClose())
 	{
@@ -260,9 +326,15 @@ int FWmain()
 		glUniformMatrix4fv(mcLoc, 1, GL_FALSE, (window.getMp() * window.getMv()).get());
 
 		// 描画
+		glPopMatrix();
 		glBindVertexArray(vao);
+
+		hoge++;
 		glDrawArrays(GL_POINTS, 0, vertices);
 
+		glPushMatrix();
+		
+		//display();
 		// バッファを入れ替える
 		window.swapBuffers();
 	}
@@ -276,7 +348,7 @@ int FWmain()
 
 int MainGL::GLmain()
 {
-	FWmain();
+	//FWmain();
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(WIDTH, HEIGHT);
 	//glutInit(&argc, argv);
@@ -294,7 +366,9 @@ int MainGL::GLmain()
 	return 0;
 }
 
+void MainGL::SetRightEye(std::vector<Point3f> trans){
 
+}
 
 void MainGL::SetAngle(Point3f xAxis, Point3f yAxis, Point3f zAxis){
 

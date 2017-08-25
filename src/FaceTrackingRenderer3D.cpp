@@ -235,6 +235,11 @@ void FaceTrackingRenderer3D::DrawBitmap(PXCCapture::Sample* sample, bool ir)
 					ptr[1] = pxcBYTE(-depth);
 					ptr[2] = pxcBYTE(-depth);
 					ptr[3] = pxcBYTE(255.0f);
+
+					//ç¿ïWÇopenGLÇ÷ìnÇ∑
+					if (PointInPolygon(Point2(ix, iy), rightEyeList)){
+
+					}
 				}
 
 				numVertices++;

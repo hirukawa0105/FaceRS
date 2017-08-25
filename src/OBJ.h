@@ -43,6 +43,7 @@ struct Vector4I{
 struct Triangle{
 	Vector3f TriVer;
 	Vector3f TriNor;
+	Color4 TriColor;
 	UV TriUV;
 }Tri;
 //ポリゴンデータ
@@ -62,6 +63,7 @@ struct MATERIAL{
 	vector <Quadrangle> Quaddata;//四角面データ
 	vector <unsigned int> TriVerID;//各種インデックス
 	vector <unsigned int> TriNorID;
+	vector <unsigned int> TriColorID;
 	vector <unsigned int> TriUVID;
 	vector <unsigned int> QuadVerID;
 	vector <unsigned int> QuadNorID;
@@ -82,9 +84,12 @@ public:
 	MODEL(char* FileName);//コンストラクタ
 	bool OBJ_Load(char* FileName);//ロード
 	void Draw();
+	void RealSenseDraw();
 	vector <Vector3f> objVertex;//3次元点
 	Vector3f centerPoint;
 	void calcCenter();
+	// カラー配列情報
+	
 
 
 };
@@ -95,26 +100,33 @@ MODEL::MODEL(char* FileName){
 }
 //描画
 void MODEL::Draw(){
+	
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
+	//glEnableClientState(GL_COLOR_ARRAY);
 	for (int i = 0; i<(signed)Material.size(); i++){
+
 		glPushMatrix();
 		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, (const GLfloat *)&Material[i].MaterialColor.ambient);
 		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, (const GLfloat *)&Material[i].MaterialColor.diffuse);
 		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, (const GLfloat *)&Material[i].MaterialColor.specular);
 		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, Material[i].Shininess);
+		
 		if (Material[i].TexNo>0){
 			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 			glEnable(GL_TEXTURE_2D);
 			glBindTexture(GL_TEXTURE_2D, TexID[Material[i].TexNo - 1]);
+			
 		}
 		else{
 			glDisable(GL_TEXTURE_2D);
 			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		}
 		if (Material[i].Tridata.size()>1){
-			glVertexPointer(3, GL_FLOAT, sizeof(Tri), &Material[i].Tridata[0].TriVer.x);
+
 			glNormalPointer(GL_FLOAT, sizeof(Tri), &Material[i].Tridata[0].TriNor.x);
+			glVertexPointer(3, GL_FLOAT, sizeof(Tri), &Material[i].Tridata[0].TriVer.x);
+			//glColorPointer(4, GL_FLOAT, sizeof(Tri), &Material[i].Tridata[0].TriColor);
 			if (Material[i].TexNo>0)glTexCoordPointer(2, GL_FLOAT, sizeof(Tri), &Material[i].Tridata[0].TriUV.u);
 			glDrawArrays(GL_TRIANGLES, 0, Material[i].Tridata.size());
 		}
@@ -126,9 +138,39 @@ void MODEL::Draw(){
 		}
 		glPopMatrix();
 	}
-	glDisableClientState(GL_VERTEX_ARRAY);
+
+	//glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisable(GL_TEXTURE_2D);
+}
+
+void MODEL::RealSenseDraw(){
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	//glEnableClientState(GL_COLOR_ARRAY);
+	for (int i = 0; i<(signed)Material.size(); i++){
+
+		glPushMatrix();
+		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, (const GLfloat *)&Material[i].MaterialColor.ambient);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, (const GLfloat *)&Material[i].MaterialColor.diffuse);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, (const GLfloat *)&Material[i].MaterialColor.specular);
+		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, Material[i].Shininess);
+
+		if (Material[i].Tridata.size()>1){
+
+			glNormalPointer(GL_FLOAT, sizeof(Tri), &Material[i].Tridata[0].TriNor.x);
+			glVertexPointer(3, GL_FLOAT, sizeof(Tri), &Material[i].Tridata[0].TriVer.x);
+			//glColorPointer(4, GL_FLOAT, sizeof(Tri), &Material[i].Tridata[0].TriColor);
+			if (Material[i].TexNo>0)glTexCoordPointer(2, GL_FLOAT, sizeof(Tri), &Material[i].Tridata[0].TriUV.u);
+			glDrawArrays(GL_TRIANGLES, 0, Material[i].Tridata.size());
+		}
+		glPopMatrix();
+	}
+
+	glDisableClientState(GL_COLOR_ARRAY);
+	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisable(GL_TEXTURE_2D);
 }
 
@@ -165,7 +207,9 @@ bool MODEL::OBJ_Load(char* FileName){
 		}
 		//法線
 		if (strcmp(key, "vn") == 0){
+			//fscanf_s(fp, "%f %f %f", &vec3d.x, &vec3d.y, &vec3d.z);
 			fscanf_s(fp, "%f %f %f", &vec3d.x, &vec3d.y, &vec3d.z);
+			//vec3d.x = 0; vec3d.y = 0; vec3d.z = -1;
 			Normal.push_back(vec3d);
 		}
 		//テクスチャ
@@ -220,6 +264,8 @@ bool MODEL::OBJ_Load(char* FileName){
 			Tri.TriVer = Vertex[Material[j].TriVerID[i]];
 			Tri.TriNor = Normal[Material[j].TriNorID[i]];
 			Tri.TriUV = uv[Material[j].TriUVID[i]];
+			Color4 temp; temp.r = 0.1f; temp.g = 1; temp.b = 1; temp.a = 1;
+			Tri.TriColor = temp;
 			Material[j].Tridata.push_back(Tri);
 		}
 		for (int i = 0; i<(signed)Material[j].QuadVerID.size(); i++){
