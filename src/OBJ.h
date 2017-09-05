@@ -90,6 +90,7 @@ public:
 	vector <Vector3f> objVertex;//3次元点
 	Vector3f centerPoint;
 	void calcCenter();
+	void CalcFacePoint();
 	std::vector<Point3f> rsVertex;
 	// カラー配列情報
 
@@ -100,6 +101,11 @@ public:
 	float minZPoint = 9999999;
 	float maxZPoint = -9999999;
 	
+	Vector3f rightEyePoint;
+	Vector3f leftEyePoint;
+	Vector3f nosePoint;
+	Vector3f mouthPoint;
+
 };
 MODEL::MODEL(){
 }
@@ -307,6 +313,7 @@ bool MODEL::OBJ_Load(char* FileName){
 
 	copy(Vertex.begin(), Vertex.end(), back_inserter(objVertex));
 	calcCenter();
+	CalcFacePoint();
 	Vertex.clear();
 	Normal.clear();
 	uv.clear();
@@ -519,4 +526,26 @@ void MODEL::calcCenter(){
 	temp.z = temp.z / objVertex.size();
 
 	centerPoint = temp;
+}
+
+void MODEL::CalcFacePoint(){
+
+	//口の計算
+	mouthPoint.x = minXPoint + ((maxXPoint - minXPoint) / 2);
+	mouthPoint.y = centerPoint.y;
+	mouthPoint.z = minZPoint + ((maxZPoint - minZPoint)*(2.0 / 9.0));
+	
+	//目の計算
+	rightEyePoint.x = minXPoint + ((maxXPoint - minXPoint) *(2.0 / 5.0));
+	rightEyePoint.y = centerPoint.y;
+	rightEyePoint.z = mouthPoint.z + ((maxZPoint - mouthPoint.z) / 2);
+
+	leftEyePoint.x = maxXPoint - ((maxXPoint - minXPoint) *(2.0 / 5.0));
+	leftEyePoint.y = centerPoint.y;
+	leftEyePoint.z = mouthPoint.z + ((maxZPoint - mouthPoint.z) / 2);
+
+	//鼻の計算
+	nosePoint.x = minXPoint + ((maxXPoint - minXPoint) / 2);
+	nosePoint.y = centerPoint.y;
+	nosePoint.z = mouthPoint.z + ((maxZPoint - mouthPoint.z) / 4);
 }

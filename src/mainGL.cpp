@@ -208,6 +208,53 @@ void drawAxis(){
 	glPopMatrix();
 }
 
+void drawMinMaxPoint(){
+	//最小点、最大点
+	glPushMatrix();
+	glTranslated(model->minXPoint, model->centerPoint.y, model->centerPoint.z);
+	glutSolidSphere(0.01, 8, 8);
+	glPopMatrix();
+	glPushMatrix();
+	glTranslated(model->maxXPoint, model->centerPoint.y, model->centerPoint.z);
+	glutSolidSphere(0.01, 8, 8);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslated(model->centerPoint.x, model->centerPoint.y, model->minZPoint);
+	glutSolidSphere(0.01, 8, 8);
+	glPopMatrix();
+	glPushMatrix();
+	glTranslated(model->centerPoint.x, model->centerPoint.y, model->maxZPoint);
+	glutSolidSphere(0.01, 8, 8);
+	glPopMatrix();
+}
+
+
+void drawFaceTest(){
+
+	//口
+	glPushMatrix();
+	glTranslated(model->mouthPoint.x, model->mouthPoint.y, model->mouthPoint.z);
+	glutSolidSphere(0.02, 8, 8);
+	glPopMatrix();
+
+	//目
+	glPushMatrix();
+	glTranslated(model->rightEyePoint.x, model->rightEyePoint.y, model->rightEyePoint.z);
+	glutSolidSphere(0.02, 8, 8);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslated(model->leftEyePoint.x, model->leftEyePoint.y, model->leftEyePoint.z);
+	glutSolidSphere(0.02, 8, 8);
+	glPopMatrix();
+
+	//鼻(補正付き)
+	glPushMatrix();
+	glTranslated(model->nosePoint.x, model->nosePoint.y - 0.02, model->nosePoint.z);
+	glutSolidSphere(0.02, 8, 8);
+	glPopMatrix();
+}
 void drawObject(){
 
 	glPushMatrix();
@@ -244,25 +291,7 @@ void drawObject(){
 	//glTranslated(-model->minXPoint, -model->minYPoint, -model->centerPoint.z);
 	glPopMatrix();
 
-	//最小点、最大点
-	glPushMatrix();
-	glTranslated(model->minXPoint, model->centerPoint.y, model->centerPoint.z);
-	glutSolidSphere(0.01, 8, 8);
-	glPopMatrix();
-	glPushMatrix();
-	glTranslated(model->maxXPoint, model->centerPoint.y, model->centerPoint.z);
-	glutSolidSphere(0.01, 8, 8);
-	glPopMatrix();
-
-	glPushMatrix();
-	glTranslated(model->centerPoint.x, model->centerPoint.y, model->minZPoint);
-	glutSolidSphere(0.01, 8, 8);
-	glPopMatrix();
-	glPushMatrix();
-	glTranslated(model->centerPoint.x, model->centerPoint.y, model->maxZPoint);
-	glutSolidSphere(0.01, 8, 8);
-	glPopMatrix();
-
+	drawFaceTest();
 	model->Draw();
 
 	glPopMatrix();
@@ -289,7 +318,7 @@ void display(void)
 
 	//座標系(わかりにくいため)
 	glPushMatrix();
-	drawAxis();
+	//drawAxis();
 	glPopMatrix();
 	
 	//テスト用
