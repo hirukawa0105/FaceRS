@@ -13,6 +13,10 @@
 
 MODEL* model;
 MODEL* rightEye;
+MODEL* leftEye;
+MODEL* nose;
+MODEL* mouth;
+
 ViewCamera camera(1.0);
 
 void Keyboard(unsigned char key, int x, int y);
@@ -41,6 +45,7 @@ Point3f rsAxis[3];//RSから得られた顔の軸方向ベクトル
 Point3f glXAxis(1, 0, 0);
 Point3f glYAxis(0, 1, 0);
 Point3f glZAxis(0, 0, 1);
+
 
 // メッシュの列数と行数
 const auto slices(16), stacks(12);
@@ -291,8 +296,35 @@ void drawObject(){
 	//glTranslated(-model->minXPoint, -model->minYPoint, -model->centerPoint.z);
 	glPopMatrix();
 
-	drawFaceTest();
-	model->Draw();
+	//drawFaceTest();
+
+	//右目描画
+	glPushMatrix();
+	glTranslated(model->rightEyePoint.x, model->rightEyePoint.y, model->rightEyePoint.z);
+	glRotated(60, 1, 0, 0);//正面方向の調整
+	glScaled(1.2, 1.2, 1.2);
+	glTranslated(-rightEye->centerPoint.x, -rightEye->centerPoint.y-0.02, -rightEye->centerPoint.z);
+	rightEye->RealSenseDraw();
+	glPopMatrix();
+	//左目
+	glPushMatrix();
+	glTranslated(model->leftEyePoint.x, model->leftEyePoint.y, model->leftEyePoint.z);
+	glRotated(60, 1, 0, 0);//正面方向の調整
+	glScaled(1.2, 1.2, 1.2);
+	glTranslated(-leftEye->centerPoint.x, -leftEye->centerPoint.y - 0.02, -leftEye->centerPoint.z);
+	leftEye->RealSenseDraw();
+	glPopMatrix();
+
+	//鼻
+	glPushMatrix();
+	glTranslated(model->nosePoint.x, model->nosePoint.y, model->nosePoint.z);
+	glRotated(60, 1, 0, 0);//正面方向の調整
+	glScaled(1.2, 1.2, 1.2);
+	glTranslated(-nose->centerPoint.x, -nose->centerPoint.y - 0.02, -nose->centerPoint.z);
+	nose->RealSenseDraw();
+	glPopMatrix();
+
+	//model->Draw();
 
 	glPopMatrix();
 }
@@ -333,18 +365,8 @@ void display(void)
 	//オブジェクト描画
 	drawObject();
 
-
-	//顔部品描画
-	glPushMatrix();
-					/***調整***/
-	glTranslated(model->centerPoint.x, model->centerPoint.y,0);
 	
-	rightEye->RealSenseDraw();
-					/***調整***/
-	
-	//camera.RenderSubAxis(WIDTH, HEIGHT);
-	glPopMatrix();
-
+	//std::cout << " " << -rightEye->centerPoint.x << " " << -rightEye->centerPoint.y << " " << -rightEye->centerPoint.z <<endl;
 	glutSwapBuffers();
 }
 void idle(void)
@@ -374,6 +396,9 @@ void Init(){
 	model = new MODEL("kettleTest.obj");
 
 	rightEye = new MODEL();
+	leftEye = new MODEL();
+	nose = new MODEL();
+	mouth = new MODEL();
 	/*std::vector<Point3f> temp;
 	float a=-2.1f;
 	for (int i = 0; i < 100;++i){
@@ -516,13 +541,46 @@ int MainGL::GLmain()
 	return 0;
 }
 
-void MainGL::SetRightEye(std::vector<Point3f> &points){
+void MainGL::SetRightEye(std::vector<Point3f> &points,Point3f center){
 
 	rightEye->VertexLoad(points);
 	points.clear();
-	//enableCalc = false;
+	rightEye->centerPoint.x = center.x;
+	rightEye->centerPoint.y = center.y;
+	rightEye->centerPoint.z = center.z;
 
 }
+
+void MainGL::SetLeftEye(std::vector<Point3f> &points, Point3f center){
+
+	leftEye->VertexLoad(points);
+	points.clear();
+	leftEye->centerPoint.x = center.x;
+	leftEye->centerPoint.y = center.y;
+	leftEye->centerPoint.z = center.z;
+
+}
+
+void MainGL::SetNose(std::vector<Point3f> &points, Point3f center){
+
+	nose->VertexLoad(points);
+	points.clear();
+	nose->centerPoint.x = center.x;
+	nose->centerPoint.y = center.y;
+	nose->centerPoint.z = center.z;
+
+}
+
+void MainGL::SetMouth(std::vector<Point3f> &points, Point3f center){
+
+	mouth->VertexLoad(points);
+	points.clear();
+	mouth->centerPoint.x = center.x;
+	mouth->centerPoint.y = center.y;
+	mouth->centerPoint.z = center.z;
+
+}
+
 
 void MainGL::SetAngle(Point3f xAxis, Point3f yAxis, Point3f zAxis){
 

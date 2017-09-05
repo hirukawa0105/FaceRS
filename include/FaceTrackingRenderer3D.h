@@ -46,6 +46,13 @@ private:
 	std::vector<Point2> mouthList;
 
 	std::vector<Point3f> rightEyeDepth;
+	Point3f rightEyeCenter;
+	std::vector<Point3f> leftEyeDepth;
+	Point3f leftEyeCenter;
+	std::vector<Point3f> noseDepth;
+	Point3f noseCenter;
+	std::vector<Point3f> mouthDepth;
+	Point3f mouthCenter;
 
 	MainGL throwGL;
 };

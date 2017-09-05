@@ -23,7 +23,10 @@ public:
 	bool enableCalc=true;
 	void SetAngle(Point3f xAxis, Point3f yAxis, Point3f zAxis);
 	void SetTrans(Point3f trans);
-	void SetRightEye(std::vector<Point3f> &trans);
+	void SetRightEye(std::vector<Point3f> &trans, Point3f center);
+	void SetLeftEye(std::vector<Point3f> &trans, Point3f center);
+	void SetNose(std::vector<Point3f> &trans, Point3f center);
+	void SetMouth(std::vector<Point3f> &trans, Point3f center);
 	bool GetCalcDuring();
 	//float CalcDot(Point3f vec1, Point3f vec2);
 	//Point3f CalcCross(Point3f vec1, Point3f vec2);

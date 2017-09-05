@@ -245,14 +245,29 @@ void FaceTrackingRenderer3D::DrawBitmap(PXCCapture::Sample* sample, bool ir)
 						rightEyeDepth.push_back(temp);
 						start = true;
 					}
+
+					//¶–Údepth‚Ìó‚¯“n‚µ
+					if (PointInPolygon(Point2(ix, iy), leftEyeList)){
+						temp.x = v.x / 1000; temp.y = v.y / 1000; temp.z = v.z / 1000;
+						leftEyeDepth.push_back(temp);
+						start = true;
+					}
+
+					//•@depth‚Ìó‚¯“n‚µ
+					if (PointInPolygon(Point2(ix, iy), noseList)){
+						temp.x = v.x / 1000; temp.y = v.y / 1000; temp.z = v.z / 1000;
+						noseDepth.push_back(temp);
+						start = true;
+					}
 				}
 
 				numVertices++;
 			}
 		}
 
-		throwGL.SetRightEye(rightEyeDepth);
-
+		throwGL.SetRightEye(rightEyeDepth,rightEyeCenter);
+		throwGL.SetLeftEye(leftEyeDepth, leftEyeCenter);
+		throwGL.SetNose(noseDepth, noseCenter);
 
 		if (vertices) delete[] vertices;
 
@@ -345,12 +360,25 @@ void FaceTrackingRenderer3D::DrawLine(PXCFaceData::Face* trackedFace){
 		points[l].world.z *= 1000.0f;
 	}
 
-	for (int l = 0; l < numPoints; l++) //initialize Array
-	{
-		points[l].world.x = 0.0;
-		points[l].world.y = 0.0;
-		points[l].world.z = 0.0;
-	}
+	//for (int l = 0; l < numPoints; l++) //initialize Array
+	//{
+	//	points[l].world.x = 0.0;
+	//	points[l].world.y = 0.0;
+	//	points[l].world.z = 0.0;
+	//}
+
+	//
+
+	//landmarkData->QueryPoints(points); //data set for all landmarks in frame
+
+	//
+	////convert depth data is to millimeters
+	//for (int l = 0; l < numPoints; l++)
+	//{
+	//	points[l].world.x *= 1000.0f;
+	//	points[l].world.y *= 1000.0f;
+	//	points[l].world.z *= 1000.0f;
+	//}
 
 	HPEN cyan = CreatePen(PS_SOLID, 2, RGB(255, 255, 255));
 	if (!cyan)
@@ -361,19 +389,9 @@ void FaceTrackingRenderer3D::DrawLine(PXCFaceData::Face* trackedFace){
 	}
 	SelectObject(dc2, cyan);
 
-	landmarkData->QueryPoints(points); //data set for all landmarks in frame
-
 	//•`‰æüƒ‹[ƒv—p
 	int _x;
 	int _y;
-
-	//convert depth data is to millimeters
-	for (int l = 0; l < numPoints; l++)
-	{
-		points[l].world.x *= 1000.0f;
-		points[l].world.y *= 1000.0f;
-		points[l].world.z *= 1000.0f;
-	}
 
 	for (int i = 0; i < numPoints; i++)
 	{
@@ -453,6 +471,18 @@ void FaceTrackingRenderer3D::DrawLine(PXCFaceData::Face* trackedFace){
 			}
 		}
 	}
+
+	rightEyeCenter.x = points[76].world.x / 1000;
+	rightEyeCenter.y = points[76].world.y / 1000;
+	rightEyeCenter.z = points[76].world.z / 1000;
+
+	leftEyeCenter.x = points[77].world.x / 1000;
+	leftEyeCenter.y = points[77].world.y / 1000;
+	leftEyeCenter.z = points[77].world.z / 1000;
+
+	noseCenter.x = points[28].world.x / 1000;
+	noseCenter.y = points[28].world.y / 1000;
+	noseCenter.z = points[28].world.z / 1000;
 
 	if (points) delete[] points;
 
