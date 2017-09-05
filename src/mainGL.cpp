@@ -173,6 +173,101 @@ void display2(void)
 	glutSwapBuffers();
 }
 
+void drawAxis(){
+
+	glPushMatrix();
+	glTranslated(-0.3, 0, 0);
+	glutSolidSphere(0.005, 8, 8);
+	glTranslated(0.1, 0, 0);
+	glutSolidSphere(0.005, 8, 8);
+	glTranslated(0.1, 0, 0);
+	glutSolidSphere(0.005, 8, 8);
+	glTranslated(0.1, 0, 0);
+	glutSolidSphere(0.005, 8, 8);
+	glTranslated(0.1, 0, 0);
+	glutSolidSphere(0.005, 8, 8);
+	glTranslated(0.1, 0, 0);
+	glutSolidSphere(0.005, 8, 8);
+	glTranslated(0.1, 0, 0);
+	glutSolidSphere(0.005, 8, 8);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslated(0, 0.1, 0);
+	glutSolidSphere(0.005, 8, 8);
+	glTranslated(0, 0.1, 0);
+	glutSolidSphere(0.005, 8, 8);
+	glTranslated(0, 0.1, 0);
+	glutSolidSphere(0.005, 8, 8);
+	glTranslated(0, 0.1, 0);
+	glutSolidSphere(0.005, 8, 8);
+	glTranslated(0, 0.1, 0);
+	glutSolidSphere(0.005, 8, 8);
+	glTranslated(0, 0.1, 0);
+	glutSolidSphere(0.005, 8, 8);
+	glPopMatrix();
+}
+
+void drawObject(){
+
+	glPushMatrix();
+	glTranslated(model->centerPoint.x, model->centerPoint.y, model->centerPoint.z);
+
+	//SetDist(1);
+	if (hoge % 2 == 0){
+
+		//cout << (int)rsAngle.x << " " << (int)rsAngle.y << " " << (int)rsAngle.z << endl;
+		//cout << model->centerPoint.x << " " << model->centerPoint.y << " " << model->centerPoint.z << endl;
+		/*cout << (int)CalcTwoVectorAngle(rsAxis[0], rsAxis[1]) << " " << (int)CalcTwoVectorAngle(rsAxis[1], rsAxis[2]) << " "
+		<< (int)CalcTwoVectorAngle(rsAxis[0], rsAxis[2]) << endl;*/
+		//cout <<"Axis:"<< rsAxis[1].x << " " << rsAxis[1].y << " " << rsAxis[1].z << endl;
+	}
+
+	if (hoge % 3 == 0){//1frameñàÇ…âÒì]Ç≥ÇπÇÈÇ∆ãììÆïsêRÇ»ìÆÇ´ÇÇ∑ÇÈÇΩÇﬂä‘äuÇÇ†ÇØÇƒçXêV
+
+		rsAngle_.x = rsAngle.x;
+		rsAngle_.y = rsAngle.y;
+		rsAngle_.z = rsAngle.z;
+	}
+
+	glRotated((int)rsAngle_.z * 2.2, 1, 0, 0);//êUïùí≤êÆ
+	glRotated((int)rsAngle_.x, 0, 1, 0);
+	glRotated(-(int)rsAngle_.y, 0, 0, 1);
+
+	glRotated(-90, 1, 0, 0);//realsenseÇÃobjèoóÕäpìxÇÃí≤êÆ
+
+	glTranslated(-model->centerPoint.x, -model->centerPoint.y, -model->centerPoint.z);
+	glTranslated(rsTrans.x / 1000, rsTrans.y / 1000, 0);
+
+	glPushMatrix();
+	//glutSolidSphere(0.01, 16, 16);
+	//glTranslated(-model->minXPoint, -model->minYPoint, -model->centerPoint.z);
+	glPopMatrix();
+
+	//ç≈è¨ì_ÅAç≈ëÂì_
+	glPushMatrix();
+	glTranslated(model->minXPoint, model->centerPoint.y, model->centerPoint.z);
+	glutSolidSphere(0.01, 8, 8);
+	glPopMatrix();
+	glPushMatrix();
+	glTranslated(model->maxXPoint, model->centerPoint.y, model->centerPoint.z);
+	glutSolidSphere(0.01, 8, 8);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslated(model->centerPoint.x, model->centerPoint.y, model->minZPoint);
+	glutSolidSphere(0.01, 8, 8);
+	glPopMatrix();
+	glPushMatrix();
+	glTranslated(model->centerPoint.x, model->centerPoint.y, model->maxZPoint);
+	glutSolidSphere(0.01, 8, 8);
+	glPopMatrix();
+
+	model->Draw();
+
+	glPopMatrix();
+}
+
 void display(void)
 {
 
@@ -191,45 +286,30 @@ void display(void)
 		model->centerPoint.x, model->centerPoint.y, model->centerPoint.z,
 		0, 1, 0);
 	hoge++;
+
+	//ç¿ïWån(ÇÌÇ©ÇËÇ…Ç≠Ç¢ÇΩÇﬂ)
 	glPushMatrix();
-	glTranslated(model->centerPoint.x,model->centerPoint.y, model->centerPoint.z);
+	drawAxis();
+	glPopMatrix();
 	
-	//SetDist(1);
-	if (hoge % 2 == 0){
+	//ÉeÉXÉgóp
+	glPushMatrix();
+	//model->Draw();
 
-		//cout << (int)rsAngle.x << " " << (int)rsAngle.y << " " << (int)rsAngle.z << endl;
-		//cout << model->centerPoint.x << " " << model->centerPoint.y << " " << model->centerPoint.z << endl;
-		/*cout << (int)CalcTwoVectorAngle(rsAxis[0], rsAxis[1]) << " " << (int)CalcTwoVectorAngle(rsAxis[1], rsAxis[2]) << " " 
-			<< (int)CalcTwoVectorAngle(rsAxis[0], rsAxis[2]) << endl;*/
-		//cout <<"Axis:"<< rsAxis[1].x << " " << rsAxis[1].y << " " << rsAxis[1].z << endl;
-	}
-
-	if (hoge % 3 == 0){//1frameñàÇ…âÒì]Ç≥ÇπÇÈÇ∆ãììÆïsêRÇ»ìÆÇ´ÇÇ∑ÇÈÇΩÇﬂä‘äuÇÇ†ÇØÇƒçXêV
-
-		rsAngle_.x = rsAngle.x;
-		rsAngle_.y = rsAngle.y;
-		rsAngle_.z = rsAngle.z;
-	}
 	
-	glRotated((int)rsAngle_.z * 2.2, 1, 0, 0);//êUïùí≤êÆ
-	glRotated((int)rsAngle_.x, 0, 1, 0);
-	glRotated(-(int)rsAngle_.y, 0, 0, 1);
 	
-	glRotated(-90, 1, 0, 0);//realsenseÇÃobjèoóÕäpìxÇÃí≤êÆ
-
-	glTranslated(-model->centerPoint.x, -model->centerPoint.y, -model->centerPoint.z);
-	glTranslated(rsTrans.x/1000, rsTrans.y/1000, 0);
-
-	model->Draw();
-
 
 	glPopMatrix();
-	//Å@ï‚èïé≤ÇÃï`âÊ
-	glPushMatrix();
 
+	//ÉIÉuÉWÉFÉNÉgï`âÊ
+	drawObject();
+
+
+	//äÁïîïiï`âÊ
+	glPushMatrix();
 					/***í≤êÆ***/
 	glTranslated(model->centerPoint.x, model->centerPoint.y,0);
-	glRotated(30, 1, 0, 0);//êUïùí≤êÆ
+	
 	rightEye->RealSenseDraw();
 					/***í≤êÆ***/
 	
@@ -262,7 +342,7 @@ void Init(){
 	position[1] = 0.0;
 	position[2] = 0.0;
 	//model = new MODEL("3DScan2.obj");
-	model = new MODEL("kettle.obj");
+	model = new MODEL("kettleTest.obj");
 
 	rightEye = new MODEL();
 	/*std::vector<Point3f> temp;

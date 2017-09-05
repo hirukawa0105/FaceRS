@@ -92,9 +92,14 @@ public:
 	void calcCenter();
 	std::vector<Point3f> rsVertex;
 	// カラー配列情報
+
+	float minXPoint = 9999999;
+	float maxXPoint = -9999999;
+	float minYPoint = 9999999;
+	float maxYPoint = -9999999;
+	float minZPoint = 9999999;
+	float maxZPoint = -9999999;
 	
-
-
 };
 MODEL::MODEL(){
 }
@@ -159,7 +164,7 @@ void MODEL::RealSenseDraw(){
 	for (int i=0; i < rsVertex.size(); ++i){
 		temp[0] = rsVertex.at(i).x; temp[1] = rsVertex.at(i).y; temp[2] = rsVertex.at(i).z;
 
-		printf("%f\n", temp[1]);
+		//printf("%f\n", temp[1]);
 		glVertexPointer(3, GL_FLOAT, sizeof(Point3f), temp);
 		//glColorPointer(4, GL_FLOAT, sizeof(Tri), &Material[i].Tridata[0].TriColor);
 		glDrawArrays(GL_POINTS,0, 1);
@@ -200,6 +205,28 @@ bool MODEL::OBJ_Load(char* FileName){
 		if (strcmp(key, "v") == 0){
 			fscanf_s(fp, "%f %f %f", &vec3d.x, &vec3d.y, &vec3d.z);
 			Vertex.push_back(vec3d);
+
+			//最小点、最大点を求める
+			if (minXPoint > vec3d.x){
+				minXPoint = vec3d.x;
+			}
+			if (maxXPoint < vec3d.x){
+				maxXPoint = vec3d.x;
+			}
+
+			if (minYPoint > vec3d.y){
+				minYPoint = vec3d.y;
+			}
+			if (maxYPoint < vec3d.y){
+				maxYPoint = vec3d.y;
+			}
+
+			if (minZPoint > vec3d.z){
+				minZPoint = vec3d.z;
+			}
+			if (maxZPoint < vec3d.z){
+				maxZPoint = vec3d.z;
+			}
 		}
 		//法線
 		if (strcmp(key, "vn") == 0){
