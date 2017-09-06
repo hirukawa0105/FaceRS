@@ -3,6 +3,7 @@
 #include "pxccapture.h"
 #include <string.h>
 #include <iostream>
+#include "cvwin.hpp"
 
 using namespace std;
 
@@ -10,9 +11,10 @@ FaceTrackingRenderer2D::~FaceTrackingRenderer2D()
 {
 }
 
-FaceTrackingRenderer2D::FaceTrackingRenderer2D(HWND window, int outputPanelID,HBITMAP* colorMap) : FaceTrackingRenderer(window, outputPanelID), bActivateEyeCenterCalculations(false)
+FaceTrackingRenderer2D::FaceTrackingRenderer2D(HWND window, MainGL* GL, int outputPanelID, HBITMAP* colorMap) : FaceTrackingRenderer(window, outputPanelID), bActivateEyeCenterCalculations(false)
 {
 	Reset();
+	throwGL = *GL;
 }
 
 void FaceTrackingRenderer2D::DrawGraphics(PXCFaceData* faceOutput)
@@ -67,10 +69,31 @@ void FaceTrackingRenderer2D::DrawBitmap(PXCCapture::Sample* sample, bool ir)
 		binfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
 		binfo.bmiHeader.biCompression = BI_RGB;
 		Sleep(1);
+		
 		m_bitmap = CreateDIBitmap(dc, &binfo.bmiHeader, CBM_INIT, data.planes[0], &binfo, DIB_RGB_COLORS);
-
+		
 		ReleaseDC(hwndPanel, dc);
 		image->ReleaseAccess(&data);
+		HBITMAP test = (HBITMAP)::CopyImage(m_bitmap, IMAGE_BITMAP, 0, 0, LR_COPYRETURNORG);
+		cv::Mat camera = cvwin::BitmapToMat(test);
+
+		for (int y = 0; y < camera.rows; ++y){
+			for (int x = 0; x < camera.cols; ++x){
+				// 画像のチャネル数分だけループ。白黒の場合は1回、カラーの場合は3回　　　　　
+				for (int c = 0; c < camera.channels(); ++c){
+					//cout << camera.data[y * camera.step + x *camera.elemSize() + c] << endl;
+					if (y == 0){
+						int a = camera.data[y * camera.step + x *camera.elemSize() + c];
+						//cout << a << endl;
+					}
+				}
+			}
+		}
+
+		cv::imshow("aaa", camera);
+		cv::waitKey(1);
+
+
 	}
 
 	DrawDistances();
@@ -395,6 +418,8 @@ void FaceTrackingRenderer2D::DrawLine(PXCFaceData::Face* trackedFace){
 	}
 
 
+
+	
 	SetBkMode(dc2, TRANSPARENT);
 
 	SelectObject(dc2, m_bitmap);
@@ -402,6 +427,8 @@ void FaceTrackingRenderer2D::DrawLine(PXCFaceData::Face* trackedFace){
 
 	BITMAP bitmap;
 	GetObject(m_bitmap, sizeof(bitmap), &bitmap);
+
+	
 
 	pxcI32 numPoints = landmarkData->QueryNumPoints();
 	if (numPoints != m_numLandmarks)
@@ -421,12 +448,13 @@ void FaceTrackingRenderer2D::DrawLine(PXCFaceData::Face* trackedFace){
 		ReleaseDC(panelWindow, dc1);
 		return;
 	}
+
+	SelectObject(dc2, cyan);
 	
-
-
 	//描画線ループ用
 	int _x;
 	int _y;
+
 
 	for (int i = 0; i < numPoints; ++i)
 	{
@@ -493,8 +521,10 @@ void FaceTrackingRenderer2D::DrawLine(PXCFaceData::Face* trackedFace){
 	}
 
 	DeleteObject(cyan);
-
 	DeleteDC(dc2);
+
+	
+	
 	ReleaseDC(panelWindow, dc1);
 
 }
@@ -525,15 +555,40 @@ void FaceTrackingRenderer2D::DrawLandmark(PXCFaceData::Face* trackedFace)
 		return;
 	}
 
+	
+	
+
+	
+
+	/*int width = camera.cols;
+	int height = camera.rows;
+	int channels = camera.channels();
+	for (int j = 0; j<height; j++)
+	{
+		int step = j*width;
+		for (int i = 0; i<width; i++)
+		{
+			int elm = i*camera.elemSize();
+			for (int c = 0; c<channels; c++)
+			{
+				camera.data[step + elm + c] = 0;
+			}
+		}
+	}*/
+
+	//printf("%s%s%s", bit[0], bit[1], bit[2]);
 
 	SetBkMode(dc2, TRANSPARENT);
 
 	SelectObject(dc2, m_bitmap);
 	SelectObject(dc2, hFont);
 
+	
+
 	BITMAP bitmap;
 	GetObject(m_bitmap, sizeof(bitmap), &bitmap);
 
+	
 	pxcI32 numPoints = landmarkData->QueryNumPoints();
 	if (numPoints != m_numLandmarks)
 	{
@@ -603,6 +658,7 @@ void FaceTrackingRenderer2D::DrawLandmark(PXCFaceData::Face* trackedFace)
 	DeleteObject(hFont);
 	DeleteDC(dc2);
 	ReleaseDC(panelWindow, dc1);
+
 }
 
 void FaceTrackingRenderer2D::DrawLocation(PXCFaceData::Face* trackedFace)

@@ -51,6 +51,8 @@ FaceTrackingRenderer3D::FaceTrackingRenderer3D(HWND window, PXCSession* session,
 	for (int i = 0; i < 12; i++){
 		mouthList.push_back(Point2(0, 0));
 	}
+
+	_colorMap = colorMap;
 }
 
 bool FaceTrackingRenderer3D::ProjectVertex(const PXCPoint3DF32 &v, double &x, double &y, int radius)
@@ -401,15 +403,18 @@ void FaceTrackingRenderer3D::DrawLine(PXCFaceData::Face* trackedFace){
 	int _x;
 	int _y;
 
-	SelectObject(dc2, cyan);
+	//HDC dc3 = CreateCompatibleDC(dc1);
+	//SetBkMode(dc3, TRANSPARENT);
+	//SelectObject(dc3, *_colorMap);
+	//SelectObject(dc3, hFont);
 
-	COLORREF color = GetPixel(dc2, 0, 0);
-	int R = GetRValue(color);//赤情報取り出し
-	int G = GetGValue(color);//緑情報取り出し
-	int B = GetBValue(color);//青情報取り出し
-	
+	//COLORREF color = GetPixel(dc3, 0, 0);
+	//int R = GetRValue(color);//赤情報取り出し
+	//int G = GetGValue(color);//緑情報取り出し
+	//int B = GetBValue(color);//青情報取り出し
 
-	printf("%d,%d,%d\n", R, G, B);
+	//printf("%d,%d,%d\n", R, G, B);
+
 
 	for (int i = 0; i < numPoints; i++)
 	{
@@ -511,6 +516,9 @@ void FaceTrackingRenderer3D::DrawLine(PXCFaceData::Face* trackedFace){
 	DeleteObject(cyan);
 	DeleteObject(hFont);
 	DeleteDC(dc2);
+
+	
+
 	ReleaseDC(panelWindow, dc1);
 
 }

@@ -16,6 +16,9 @@ public:
 class MainGL
 {
 public:
+
+#define WIDTH 640
+#define HEIGHT 480
 	MainGL();
 	~MainGL();
 
@@ -27,6 +30,7 @@ public:
 	void SetLeftEye(std::vector<Point3f> &trans, Point3f center);
 	void SetNose(std::vector<Point3f> &trans, Point3f center);
 	void SetMouth(std::vector<Point3f> &trans, Point3f center);
+	void SetCameraMap(float cameraMap[640][480][3]);
 	bool GetCalcDuring();
 	//float CalcDot(Point3f vec1, Point3f vec2);
 	//Point3f CalcCross(Point3f vec1, Point3f vec2);

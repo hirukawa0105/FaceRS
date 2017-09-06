@@ -46,6 +46,8 @@ Point3f glXAxis(1, 0, 0);
 Point3f glYAxis(0, 1, 0);
 Point3f glZAxis(0, 0, 1);
 
+//RealSenseのカメラ画像
+float cameraMap_[640][480][3];
 
 // メッシュの列数と行数
 const auto slices(16), stacks(12);
@@ -367,8 +369,21 @@ void display(void)
 	glPushMatrix();
 	//model->Draw();
 
-	
-	
+	//if (cameraMap)
+	//{
+	//	HDC dc3;
+	//	SetBkMode(dc3, TRANSPARENT);
+	//	SelectObject(dc3, cameraMap);
+	//	DeleteObject(cameraMap);
+	//	COLORREF color = GetPixel(dc3, 0, 0);
+	//	int R = GetRValue(color);//赤情報取り出し
+	//	int G = GetGValue(color);//緑情報取り出し
+	//	int B = GetBValue(color);//青情報取り出し
+
+	//	printf("%d,%d,%d\n", R, G, B);
+
+	//}
+	//printf("%f,%f,%f\n", cameraMap[0][0][0], cameraMap[0][0][1], cameraMap[0][0][2]);
 
 	glPopMatrix();
 
@@ -636,6 +651,11 @@ void MainGL::SetTrans(Point3f trans){
 bool MainGL::GetCalcDuring(){
 	return enableCalc;
 }
+
+void MainGL::SetCameraMap(float cameraMap[640][480][3]){
+
+	//cameraMap_ = cameraMap;
+};
 
 
 void SetAxis(Point3f xAxis, Point3f yAxis,Point3f zAxis){

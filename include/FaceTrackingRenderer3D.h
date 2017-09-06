@@ -23,6 +23,8 @@ public:
 	virtual ~FaceTrackingRenderer3D();
 	void DrawBitmap(PXCCapture::Sample* sample, bool ir);
 
+	HBITMAP* _colorMap;
+
 private:
 	bool PointInPolygon(Point2 p, std::vector<Point2> points);
 	void DrawGraphics(PXCFaceData* faceOutput);
@@ -55,5 +57,6 @@ private:
 	Point3f mouthCenter;
 
 	MainGL throwGL;
+
 };
 

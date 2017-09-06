@@ -46,7 +46,7 @@ static int controls[] = { IDC_SCALE, IDC_LOCATION, IDC_LANDMARK, IDC_POSE, IDC_P
 static RECT layout[3 + sizeof(controls) / sizeof(controls[0])];
 
 MainGL mainGL;
-HBITMAP* colorMap;
+HBITMAP colorMap;
 
 std::map<int, PXCFaceConfiguration::TrackingModeType> CreateProfileMap()
 {
@@ -251,6 +251,7 @@ static DWORD WINAPI RenderingThread(LPVOID arg)
 	while (true){
 		renderer->Render();
 		renderer2->Render();
+
 	}
 }
 
@@ -597,13 +598,13 @@ int RealSenseInit(HINSTANCE hInstance){
 		return 1;
 	}
 */
-	FaceTrackingRenderer2D* renderer2D = new FaceTrackingRenderer2D(dialogWindow,IDC_PANEL2,colorMap);
+	FaceTrackingRenderer2D* renderer2D = new FaceTrackingRenderer2D(dialogWindow,&mainGL,IDC_PANEL2,&colorMap);
 	if (renderer2D == NULL)
 	{
 		MessageBoxW(0, L"Failed to create 2D renderer", L"Face Viewer", MB_ICONEXCLAMATION | MB_OK);
 		return 1;
 	}
-	FaceTrackingRenderer3D* renderer3D = new FaceTrackingRenderer3D(dialogWindow, session, &mainGL, IDC_PANEL, colorMap);
+	FaceTrackingRenderer3D* renderer3D = new FaceTrackingRenderer3D(dialogWindow, session, &mainGL, IDC_PANEL, &colorMap);
 	if (renderer3D == NULL)
 	{
 		MessageBoxW(0, L"Failed to create 3D renderer", L"Face Viewer", MB_ICONEXCLAMATION | MB_OK);

@@ -1,12 +1,16 @@
 #pragma once
 
 #include "FaceTrackingRenderer.h"
-
+#include <vector>
+#include "mainGL.h"
 
 class FaceTrackingRenderer2D : public FaceTrackingRenderer
 {
+
+#define WIDTH 640
+#define HEIGHT 480
 public:
-	FaceTrackingRenderer2D(HWND window, int outputPanelID, HBITMAP* colorMap);
+	FaceTrackingRenderer2D(HWND window, MainGL* GL, int outputPanelID, HBITMAP* colorMap);
 	virtual ~FaceTrackingRenderer2D();
 
 	void DrawBitmap(PXCCapture::Sample* sample, bool ir);
@@ -14,6 +18,7 @@ public:
 	void Reset();
 	void SetActivateEyeCenterCalculations(bool bValue) {bActivateEyeCenterCalculations = bValue;}
 
+	HBITMAP _colorMap;
 
 protected:
 	static const int sizeData    = 100;
@@ -49,7 +54,9 @@ private:
 	int frameNum;
 	int fn; //sample frame number (this starts from when frameNum == sizeData 
 
-
+	MainGL throwGL;
 	bool bActivateEyeCenterCalculations;
+	float cameraMap[WIDTH][HEIGHT][3];
+
 };
 

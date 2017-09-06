@@ -37,7 +37,9 @@ void FaceTrackingRenderer::Render()
 	DrawFrameRate();
 	DrawGraphics(m_currentFrameOutput);
 	RefreshUserInterface();
+
 }
+
 
 void FaceTrackingRenderer::DrawFrameRate()
 {
