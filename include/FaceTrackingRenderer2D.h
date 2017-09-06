@@ -6,7 +6,7 @@
 class FaceTrackingRenderer2D : public FaceTrackingRenderer
 {
 public:
-	FaceTrackingRenderer2D(HWND window, int outputPanelID);
+	FaceTrackingRenderer2D(HWND window, int outputPanelID, HBITMAP* colorMap);
 	virtual ~FaceTrackingRenderer2D();
 
 	void DrawBitmap(PXCCapture::Sample* sample, bool ir);

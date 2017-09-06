@@ -37,7 +37,7 @@ FaceTrackingRenderer3D::~FaceTrackingRenderer3D()
 {
 }
 
-FaceTrackingRenderer3D::FaceTrackingRenderer3D(HWND window, PXCSession* session, MainGL* GL, int outputPanelID) : FaceTrackingRenderer(window, outputPanelID), m_session(session)
+FaceTrackingRenderer3D::FaceTrackingRenderer3D(HWND window, PXCSession* session, MainGL* GL, int outputPanelID, HBITMAP* colorMap) : FaceTrackingRenderer(window, outputPanelID), m_session(session)
 {
 	throwGL = *GL;
 	//目や鼻のリストに空ポイントを挿入
@@ -259,6 +259,13 @@ void FaceTrackingRenderer3D::DrawBitmap(PXCCapture::Sample* sample, bool ir)
 						noseDepth.push_back(temp);
 						start = true;
 					}
+
+					//口depthの受け渡し
+					if (PointInPolygon(Point2(ix, iy), mouthList)){
+						temp.x = v.x / 1000; temp.y = v.y / 1000; temp.z = v.z / 1000;
+						mouthDepth.push_back(temp);
+						start = true;
+					}
 				}
 
 				numVertices++;
@@ -268,6 +275,7 @@ void FaceTrackingRenderer3D::DrawBitmap(PXCCapture::Sample* sample, bool ir)
 		throwGL.SetRightEye(rightEyeDepth,rightEyeCenter);
 		throwGL.SetLeftEye(leftEyeDepth, leftEyeCenter);
 		throwGL.SetNose(noseDepth, noseCenter);
+		throwGL.SetMouth(mouthDepth, mouthCenter);
 
 		if (vertices) delete[] vertices;
 
@@ -393,6 +401,16 @@ void FaceTrackingRenderer3D::DrawLine(PXCFaceData::Face* trackedFace){
 	int _x;
 	int _y;
 
+	SelectObject(dc2, cyan);
+
+	COLORREF color = GetPixel(dc2, 0, 0);
+	int R = GetRValue(color);//赤情報取り出し
+	int G = GetGValue(color);//緑情報取り出し
+	int B = GetBValue(color);//青情報取り出し
+	
+
+	printf("%d,%d,%d\n", R, G, B);
+
 	for (int i = 0; i < numPoints; i++)
 	{
 		double ix = 0, iy = 0;
@@ -483,6 +501,10 @@ void FaceTrackingRenderer3D::DrawLine(PXCFaceData::Face* trackedFace){
 	noseCenter.x = points[28].world.x / 1000;
 	noseCenter.y = points[28].world.y / 1000;
 	noseCenter.z = points[28].world.z / 1000;
+
+	mouthCenter.x = (points[47].world.x / 1000);
+	mouthCenter.y = (points[47].world.y / 1000);
+	mouthCenter.z = (points[47].world.z / 1000);
 
 	if (points) delete[] points;
 

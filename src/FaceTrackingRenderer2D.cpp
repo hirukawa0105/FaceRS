@@ -10,7 +10,7 @@ FaceTrackingRenderer2D::~FaceTrackingRenderer2D()
 {
 }
 
-FaceTrackingRenderer2D::FaceTrackingRenderer2D(HWND window, int outputPanelID) : FaceTrackingRenderer(window, outputPanelID), bActivateEyeCenterCalculations(false)
+FaceTrackingRenderer2D::FaceTrackingRenderer2D(HWND window, int outputPanelID,HBITMAP* colorMap) : FaceTrackingRenderer(window, outputPanelID), bActivateEyeCenterCalculations(false)
 {
 	Reset();
 }
@@ -421,7 +421,8 @@ void FaceTrackingRenderer2D::DrawLine(PXCFaceData::Face* trackedFace){
 		ReleaseDC(panelWindow, dc1);
 		return;
 	}
-	SelectObject(dc2, cyan);
+	
+
 
 	//ï`âÊê¸ÉãÅ[Évóp
 	int _x;

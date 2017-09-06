@@ -19,7 +19,7 @@ public:
 class FaceTrackingRenderer3D : public FaceTrackingRenderer
 {
 public:
-	FaceTrackingRenderer3D(HWND window, PXCSession* session, MainGL* GL, int outputPanelID);
+	FaceTrackingRenderer3D(HWND window, PXCSession* session, MainGL* GL, int outputPanelID, HBITMAP* colorMap);
 	virtual ~FaceTrackingRenderer3D();
 	void DrawBitmap(PXCCapture::Sample* sample, bool ir);
 

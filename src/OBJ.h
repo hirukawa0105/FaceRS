@@ -321,102 +321,13 @@ bool MODEL::OBJ_Load(char* FileName){
 }
 
 bool MODEL::VertexLoad(vector<Point3f> &points){
-	//Vector4I Face[3];//一時代入用
-	//vector <Vector3f> Vertex;//頂点
-	//vector <Vector3f> Normal;//法線
-	//vector <UV> uv;//UV
-
+	
 	rsVertex.clear();
 
 	for (int i = 0; i < points.size();++i){
 		rsVertex.push_back(points.at(i));
 	}
 
-	/*fscanf_s(fp, "%f %f %f", &vec3d.x, &vec3d.y, &vec3d.z);
-	Vertex.push_back(vec3d);*/
-	//	}
-	//	//法線
-	//	if (strcmp(key, "vn") == 0){
-	//		//fscanf_s(fp, "%f %f %f", &vec3d.x, &vec3d.y, &vec3d.z);
-	//		fscanf_s(fp, "%f %f %f", &vec3d.x, &vec3d.y, &vec3d.z);
-	//		//vec3d.x = 0; vec3d.y = 0; vec3d.z = -1;
-	//		Normal.push_back(vec3d);
-	//	}
-	//	//テクスチャ
-	//	if (strcmp(key, "vt") == 0){
-	//		fscanf_s(fp, "%f %f", &vec2d.u, &vec2d.v);
-	//		uv.push_back(vec2d);
-	//	}
-	//	//マテリアルセット
-	//	if (strcmp(key, "usemtl") == 0){
-	//		fscanf_s(fp, "%s ", key, sizeof(key));
-	//		for (int i = 0; i<(signed)Material.size(); i++){
-	//			if (strcmp(key, Material[i].MaterialName.c_str()) == 0)Material_No = i;
-	//		}
-	//	}
-	//	//面のインデックス 0=頂点 1=UV 2=法線
-	//	if (strcmp(key, "f") == 0){
-	//		Face[0].w = -1;
-	//		Face[1].w = -1;
-	//		Face[2].w = -1;
-	//		fscanf_s(fp, "%d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d", &Face[0].x, &Face[1].x, &Face[2].x, &Face[0].y, &Face[1].y, &Face[2].y, &Face[0].z, &Face[1].z, &Face[2].z, &Face[0].w, &Face[1].w, &Face[2].w);
-	//		if ((Face[0].w == -1) && (Face[1].w == -1) && (Face[2].w == -1)){
-	//			//三角面
-	//			Material[Material_No].TriVerID.push_back(Face[0].x - 1);
-	//			Material[Material_No].TriVerID.push_back(Face[0].y - 1);
-	//			Material[Material_No].TriVerID.push_back(Face[0].z - 1);
-	//			Material[Material_No].TriUVID.push_back(Face[1].x - 1);
-	//			Material[Material_No].TriUVID.push_back(Face[1].y - 1);
-	//			Material[Material_No].TriUVID.push_back(Face[1].z - 1);
-	//			Material[Material_No].TriNorID.push_back(Face[2].x - 1);
-	//			Material[Material_No].TriNorID.push_back(Face[2].y - 1);
-	//			Material[Material_No].TriNorID.push_back(Face[2].z - 1);
-	//		}
-	//		else{
-	//			//四角面
-	//			Material[Material_No].QuadVerID.push_back(Face[0].x - 1);
-	//			Material[Material_No].QuadVerID.push_back(Face[0].y - 1);
-	//			Material[Material_No].QuadVerID.push_back(Face[0].z - 1);
-	//			Material[Material_No].QuadVerID.push_back(Face[0].w - 1);
-	//			Material[Material_No].QuadUVID.push_back(Face[1].x - 1);
-	//			Material[Material_No].QuadUVID.push_back(Face[1].y - 1);
-	//			Material[Material_No].QuadUVID.push_back(Face[1].z - 1);
-	//			Material[Material_No].QuadUVID.push_back(Face[1].w - 1);
-	//			Material[Material_No].QuadNorID.push_back(Face[2].x - 1);
-	//			Material[Material_No].QuadNorID.push_back(Face[2].y - 1);
-	//			Material[Material_No].QuadNorID.push_back(Face[2].z - 1);
-	//			Material[Material_No].QuadNorID.push_back(Face[2].w - 1);
-	//		}
-	//	}
-	//}
-	//for (int j = 0; j<(signed)Material.size(); j++){
-	//	for (int i = 0; i<(signed)Material[j].TriVerID.size(); i++){
-	//		Tri.TriVer = Vertex[Material[j].TriVerID[i]];
-	//		Tri.TriNor = Normal[Material[j].TriNorID[i]];
-	//		Tri.TriUV = uv[Material[j].TriUVID[i]];
-	//		Color4 temp; temp.r = 0.1f; temp.g = 1; temp.b = 1; temp.a = 1;
-	//		Tri.TriColor = temp;
-	//		Material[j].Tridata.push_back(Tri);
-	//	}
-	//	for (int i = 0; i<(signed)Material[j].QuadVerID.size(); i++){
-	//		Quad.QuadVer = Vertex[Material[j].QuadVerID[i]];
-	//		Quad.QuadNor = Normal[Material[j].QuadNorID[i]];
-	//		Quad.QuadUV = uv[Material[j].QuadUVID[i]];
-	//		Material[j].Quaddata.push_back(Quad);
-	//	}
-	//	Material[j].TriVerID.clear();
-	//	Material[j].TriNorID.clear();
-	//	Material[j].TriUVID.clear();
-	//	Material[j].QuadVerID.clear();
-	//	Material[j].QuadNorID.clear();
-	//	Material[j].QuadUVID.clear();
-	//}
-
-	//copy(Vertex.begin(), Vertex.end(), back_inserter(objVertex));
-	//calcCenter();
-	//Vertex.clear();
-	//Normal.clear();
-	//uv.clear();
 	return true;
 }
 
@@ -536,11 +447,11 @@ void MODEL::CalcFacePoint(){
 	mouthPoint.z = minZPoint + ((maxZPoint - minZPoint)*(2.0 / 9.0));
 	
 	//目の計算
-	rightEyePoint.x = minXPoint + ((maxXPoint - minXPoint) *(2.0 / 5.0));
+	rightEyePoint.x = minXPoint + ((maxXPoint - minXPoint) *(1.5 / 5.0));
 	rightEyePoint.y = centerPoint.y;
 	rightEyePoint.z = mouthPoint.z + ((maxZPoint - mouthPoint.z) / 2);
 
-	leftEyePoint.x = maxXPoint - ((maxXPoint - minXPoint) *(2.0 / 5.0));
+	leftEyePoint.x = maxXPoint - ((maxXPoint - minXPoint) *(1.5 / 5.0));
 	leftEyePoint.y = centerPoint.y;
 	leftEyePoint.z = mouthPoint.z + ((maxZPoint - mouthPoint.z) / 2);
 

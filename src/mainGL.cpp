@@ -300,28 +300,38 @@ void drawObject(){
 
 	//‰E–Ú•`‰æ
 	glPushMatrix();
-	glTranslated(model->rightEyePoint.x, model->rightEyePoint.y, model->rightEyePoint.z);
+	glTranslated(model->rightEyePoint.x, model->rightEyePoint.y - 0.01, model->rightEyePoint.z);
 	glRotated(60, 1, 0, 0);//³–Ê•ûŒü‚Ì’²®
 	glScaled(1.2, 1.2, 1.2);
-	glTranslated(-rightEye->centerPoint.x, -rightEye->centerPoint.y-0.02, -rightEye->centerPoint.z);
+	glTranslated(-rightEye->centerPoint.x, -rightEye->centerPoint.y, -rightEye->centerPoint.z);
 	rightEye->RealSenseDraw();
 	glPopMatrix();
+
 	//¶–Ú
 	glPushMatrix();
-	glTranslated(model->leftEyePoint.x, model->leftEyePoint.y, model->leftEyePoint.z);
+	glTranslated(model->leftEyePoint.x, model->leftEyePoint.y - 0.01, model->leftEyePoint.z);
 	glRotated(60, 1, 0, 0);//³–Ê•ûŒü‚Ì’²®
 	glScaled(1.2, 1.2, 1.2);
-	glTranslated(-leftEye->centerPoint.x, -leftEye->centerPoint.y - 0.02, -leftEye->centerPoint.z);
+	glTranslated(-leftEye->centerPoint.x, -leftEye->centerPoint.y, -leftEye->centerPoint.z);
 	leftEye->RealSenseDraw();
 	glPopMatrix();
 
 	//•@
 	glPushMatrix();
-	glTranslated(model->nosePoint.x, model->nosePoint.y, model->nosePoint.z);
-	glRotated(60, 1, 0, 0);//³–Ê•ûŒü‚Ì’²®
+	glTranslated(model->nosePoint.x, model->nosePoint.y - 0.02, model->nosePoint.z);
+	glRotated(70, 1, 0, 0);//³–Ê•ûŒü‚Ì’²®
 	glScaled(1.2, 1.2, 1.2);
-	glTranslated(-nose->centerPoint.x, -nose->centerPoint.y - 0.02, -nose->centerPoint.z);
+	glTranslated(-nose->centerPoint.x, -nose->centerPoint.y, -nose->centerPoint.z);
 	nose->RealSenseDraw();
+	glPopMatrix();
+
+	//•@
+	glPushMatrix();
+	glTranslated(model->mouthPoint.x, model->mouthPoint.y - 0.02, model->mouthPoint.z);
+	glRotated(70, 1, 0, 0);//³–Ê•ûŒü‚Ì’²®
+	glScaled(1.2, 1.2, 1.2);
+	glTranslated(-mouth->centerPoint.x, -mouth->centerPoint.y, -mouth->centerPoint.z);
+	mouth->RealSenseDraw();
 	glPopMatrix();
 
 	//model->Draw();
