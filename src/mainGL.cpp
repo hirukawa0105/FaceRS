@@ -47,7 +47,7 @@ Point3f glYAxis(0, 1, 0);
 Point3f glZAxis(0, 0, 1);
 
 //RealSenseのカメラ画像
-float cameraMap_[640][480][3];
+cv::Mat cameraMap = cv::Mat::zeros(cv::Size(160, 100), CV_8U);
 
 // メッシュの列数と行数
 const auto slices(16), stacks(12);
@@ -384,7 +384,13 @@ void display(void)
 
 	//}
 	//printf("%f,%f,%f\n", cameraMap[0][0][0], cameraMap[0][0][1], cameraMap[0][0][2]);
+	cv::imshow("aaa", cameraMap);
+	cv::waitKey(1);
 
+	
+
+		
+	
 	glPopMatrix();
 
 	//オブジェクト描画
@@ -652,9 +658,9 @@ bool MainGL::GetCalcDuring(){
 	return enableCalc;
 }
 
-void MainGL::SetCameraMap(float cameraMap[640][480][3]){
+void MainGL::SetCameraMap(cv::Mat cameraMap_){
 
-	//cameraMap_ = cameraMap;
+	cameraMap = cameraMap_.clone();
 };
 
 

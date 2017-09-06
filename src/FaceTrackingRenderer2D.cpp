@@ -77,22 +77,18 @@ void FaceTrackingRenderer2D::DrawBitmap(PXCCapture::Sample* sample, bool ir)
 		HBITMAP test = (HBITMAP)::CopyImage(m_bitmap, IMAGE_BITMAP, 0, 0, LR_COPYRETURNORG);
 		cv::Mat camera = cvwin::BitmapToMat(test);
 
-		for (int y = 0; y < camera.rows; ++y){
-			for (int x = 0; x < camera.cols; ++x){
-				// 画像のチャネル数分だけループ。白黒の場合は1回、カラーの場合は3回　　　　　
-				for (int c = 0; c < camera.channels(); ++c){
-					//cout << camera.data[y * camera.step + x *camera.elemSize() + c] << endl;
-					if (y == 0){
-						int a = camera.data[y * camera.step + x *camera.elemSize() + c];
-						//cout << a << endl;
-					}
-				}
-			}
-		}
+		//for (int y = 0; y < camera.rows; ++y){
+		//	for (int x = 0; x < camera.cols; ++x){
+		//		// 画像のチャネル数分だけループ。白黒の場合は1回、カラーの場合は3回　　　　　
+		//		for (int c = 0; c < camera.channels(); ++c){
+		//			if (y == 0){
+		//				int a = camera.data[y * camera.step + x *camera.elemSize() + c];
+		//			}
+		//		}
+		//	}
+		//}
 
-		cv::imshow("aaa", camera);
-		cv::waitKey(1);
-
+		throwGL.SetCameraMap(camera);
 
 	}
 
