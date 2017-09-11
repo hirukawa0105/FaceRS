@@ -237,19 +237,19 @@ void FaceTrackingRenderer3D::DrawBitmap(PXCCapture::Sample* sample, bool ir)
 
 					//âEñ⁄depthÇÃéÛÇØìnÇµ
 					if (PointInPolygon(Point2(ix, iy), rightEyeList)){
-						temp.x = v.x / 1000; temp.y = v.y / 1000; temp.z = v.z / 1000;
+						temp.x = v.x / 1000; temp.y = v.y / 1000; temp.z = -v.z / 1000;
 						rightEyeDepth.push_back(temp);
 						rightEyeColor.push_back(cv::Point2f(x, y));
 						start = true;
 					}
 
-					/*temp.x = v.x / 1000; temp.y = v.y / 1000; temp.z = v.z / 1000;
+					/*temp.x = v.x / 1000; temp.y = v.y / 1000; temp.z = -v.z / 1000;
 					rightEyeDepth.push_back(temp);
 					rightEyeColor.push_back(cv::Point2f(x, y));*/
 
 					//ç∂ñ⁄depthÇÃéÛÇØìnÇµ
 					if (PointInPolygon(Point2(ix, iy), leftEyeList)){
-						temp.x = v.x / 1000; temp.y = v.y / 1000; temp.z = v.z / 1000;
+						temp.x = v.x / 1000; temp.y = v.y / 1000; temp.z = -v.z / 1000;
 						leftEyeDepth.push_back(temp);
 						leftEyeColor.push_back(cv::Point2f(x, y));
 						start = true;
@@ -258,7 +258,7 @@ void FaceTrackingRenderer3D::DrawBitmap(PXCCapture::Sample* sample, bool ir)
 					//ï@depthÇÃéÛÇØìnÇµ
 					if (PointInPolygon(Point2(ix, iy), noseList)){
 
-						temp.x = v.x / 1000; temp.y = v.y / 1000; temp.z = v.z / 1000;
+						temp.x = v.x / 1000; temp.y = v.y / 1000; temp.z = -v.z / 1000;
 						noseDepth.push_back(temp);
 						noseColor.push_back(cv::Point2f(x, y));
 						start = true;
@@ -266,7 +266,7 @@ void FaceTrackingRenderer3D::DrawBitmap(PXCCapture::Sample* sample, bool ir)
 
 					//å˚depthÇÃéÛÇØìnÇµ
 					if (PointInPolygon(Point2(ix, iy), mouthList)){
-						temp.x = v.x / 1000; temp.y = v.y / 1000; temp.z = v.z / 1000;
+						temp.x = v.x / 1000; temp.y = v.y / 1000; temp.z = -v.z / 1000;
 						mouthDepth.push_back(temp);
 						mouthColor.push_back(cv::Point2f(x, y));
 						start = true;
@@ -510,7 +510,7 @@ void FaceTrackingRenderer3D::DrawLine(PXCFaceData::Face* trackedFace){
 		temp.y = rightEyeList.at(i).y - rightEyeGravity.y;
 		//temp = CalcUnitVecRs2D(temp);
 		rightEyeList.at(i).x += temp.x;
-		rightEyeList.at(i).y += temp.y;
+		rightEyeList.at(i).y += temp.y*2;
 	}
 
 	for (int i = 0; i < leftEyeList.size(); ++i){
@@ -519,9 +519,26 @@ void FaceTrackingRenderer3D::DrawLine(PXCFaceData::Face* trackedFace){
 		temp.y = leftEyeList.at(i).y - leftEyeGravity.y;
 		//temp = CalcUnitVecRs2D(temp);
 		leftEyeList.at(i).x += temp.x;
-		leftEyeList.at(i).y += temp.y;
+		leftEyeList.at(i).y += temp.y*2;
 	}
 
+	for (int i = 0; i < noseList.size(); ++i){
+
+		temp.x = noseList.at(i).x - noseGravity.x;
+		temp.y = noseList.at(i).y - noseGravity.y;
+		//temp = CalcUnitVecRs2D(temp);
+		noseList.at(i).x += temp.x/3;
+		noseList.at(i).y += temp.y/3;
+	}
+
+	for (int i = 0; i < mouthList.size(); ++i){
+
+		temp.x = mouthList.at(i).x - mouthGravity.x;
+		temp.y = mouthList.at(i).y - mouthGravity.y;
+		//temp = CalcUnitVecRs2D(temp);
+		mouthList.at(i).x += temp.x/2;
+		mouthList.at(i).y += temp.y/2;
+	}
 
 
 	rightEyeCenter.x = points[76].world.x / 1000;

@@ -271,6 +271,7 @@ void drawFaceTest(){
 void drawObject(){
 
 	glPushMatrix();
+	glTranslated(rsTrans.x / 1000, rsTrans.y / 1000, 0);
 	glTranslated(model->centerPoint.x, model->centerPoint.y, model->centerPoint.z);
 
 	//SetDist(1);
@@ -290,60 +291,108 @@ void drawObject(){
 		rsAngle_.z = rsAngle.z;
 	}
 
-	glRotated((int)rsAngle_.z * 2.2, 1, 0, 0);//振幅調整
+	glRotated((int)rsAngle_.z*1.5f , 1, 0, 0);//振幅調整
 	glRotated((int)rsAngle_.x, 0, 1, 0);
 	glRotated(-(int)rsAngle_.y, 0, 0, 1);
 
 	glRotated(-90, 1, 0, 0);//realsenseのobj出力角度の調整
 
 	glTranslated(-model->centerPoint.x, -model->centerPoint.y, -model->centerPoint.z);
-	glTranslated(rsTrans.x / 1000, rsTrans.y / 1000, 0);
+	
+	
 
-	glPushMatrix();
-	//glutSolidSphere(0.01, 16, 16);
-	//glTranslated(-model->minXPoint, -model->minYPoint, -model->centerPoint.z);
+	////左目
+	//glPushMatrix();
+	//glTranslated(model->leftEyePoint.x, model->leftEyePoint.y - 0.03, model->leftEyePoint.z);
+	//glRotated(90, 1, 0, 0);//正面方向の調整
+	////glScaled(1.2, 1.2, 1.2);
+	//glTranslated(-leftEye->centerPoint.x, -leftEye->centerPoint.y, -leftEye->centerPoint.z);
+	//leftEye->RealSenseDraw();
+	//glPopMatrix();
+
+	////鼻
+	//glPushMatrix();
+	//glTranslated(model->nosePoint.x, model->nosePoint.y - 0.03, model->nosePoint.z);
+	//glRotated(90, 1, 0, 0);//正面方向の調整
+	//glScaled(1.2, 1.2, 1.2);
+	//glTranslated(-nose->centerPoint.x, -nose->centerPoint.y, -nose->centerPoint.z);
+	//nose->RealSenseDraw();
+	//glPopMatrix();
+
+	////口
+	//glPushMatrix();
+	//glTranslated(model->mouthPoint.x, model->mouthPoint.y - 0.03, model->mouthPoint.z);
+	//glRotated(90, 1, 0, 0);//正面方向の調整
+	//glScaled(1.2, 1.2, 1.2);
+	//glTranslated(-mouth->centerPoint.x, -mouth->centerPoint.y, -mouth->centerPoint.z);
+	//mouth->RealSenseDraw();
+	//glPopMatrix();
+
+	model->Draw();
+	//drawFaceTest();
 	glPopMatrix();
 
-	//drawFaceTest();
-
-	//右目描画
+	//顔描画
 	glPushMatrix();
-	glTranslated(model->rightEyePoint.x, model->rightEyePoint.y - 0.03, model->rightEyePoint.z);
-	glRotated(90, 1, 0, 0);//正面方向の調整
-	//glScaled(1.2, 1.2, 1.2);
-	glTranslated(-rightEye->centerPoint.x, -rightEye->centerPoint.y, -rightEye->centerPoint.z);
+	glTranslated(rsTrans.x / 1000, rsTrans.y / 1000, 0);
+	
+	//右目
+	glPushMatrix();
+	glTranslated(model->centerPoint.x, model->centerPoint.y, -model->centerPoint.z);
+	glRotated(-(int)rsAngle_.y, 0, 0, 1);
+	glRotated(-(int)rsAngle_.z * 2.2, 1, 0, 0);
+	glRotated(-(int)rsAngle_.x, 0, 1, 0);
+	glTranslated(model->rightEyePoint.x, model->rightEyePoint.y, 0);
+	glRotated((int)rsAngle_.y, 0, 0, 1);
+	glRotated((int)rsAngle_.z * 2.2, 1, 0, 0);
+	glRotated((int)rsAngle_.x, 0, 1, 0);
+	glTranslated(-rightEye->centerPoint.x, -rightEye->centerPoint.y, rightEye->centerPoint.z);
 	rightEye->RealSenseDraw();
 	glPopMatrix();
 
 	//左目
 	glPushMatrix();
-	glTranslated(model->leftEyePoint.x, model->leftEyePoint.y - 0.03, model->leftEyePoint.z);
-	glRotated(90, 1, 0, 0);//正面方向の調整
-	//glScaled(1.2, 1.2, 1.2);
-	glTranslated(-leftEye->centerPoint.x, -leftEye->centerPoint.y, -leftEye->centerPoint.z);
+	glTranslated(model->centerPoint.x, model->centerPoint.y, -model->centerPoint.z);
+	glRotated(-(int)rsAngle_.y, 0, 0, 1);
+	glRotated(-(int)rsAngle_.z * 2.2, 1, 0, 0);
+	glRotated(-(int)rsAngle_.x, 0, 1, 0);
+	glTranslated(model->leftEyePoint.x, model->leftEyePoint.y, 0);
+	glRotated((int)rsAngle_.y, 0, 0, 1);
+	glRotated((int)rsAngle_.z * 2.2, 1, 0, 0);
+	glRotated((int)rsAngle_.x, 0, 1, 0);
+	glTranslated(-leftEye->centerPoint.x, -leftEye->centerPoint.y, leftEye->centerPoint.z);
 	leftEye->RealSenseDraw();
 	glPopMatrix();
 
 	//鼻
 	glPushMatrix();
-	glTranslated(model->nosePoint.x, model->nosePoint.y - 0.03, model->nosePoint.z);
-	glRotated(90, 1, 0, 0);//正面方向の調整
-	glScaled(1.2, 1.2, 1.2);
-	glTranslated(-nose->centerPoint.x, -nose->centerPoint.y, -nose->centerPoint.z);
+	glTranslated(model->centerPoint.x, model->centerPoint.y, -model->centerPoint.z);
+	glRotated(-(int)rsAngle_.y, 0, 0, 1);
+	glRotated(-(int)rsAngle_.z * 2.2, 1, 0, 0);
+	glRotated(-(int)rsAngle_.x, 0, 1, 0);
+	glTranslated(model->nosePoint.x, model->nosePoint.y, 0);
+	glRotated((int)rsAngle_.y, 1, 0, 0);
+	glRotated((int)rsAngle_.z * 2.2, 1, 0, 0);
+	glRotated((int)rsAngle_.x, 0, 1, 0);
+	glRotated(20, 1, 0, 0);
+	glTranslated(-nose->centerPoint.x, -nose->centerPoint.y, nose->centerPoint.z);
 	nose->RealSenseDraw();
 	glPopMatrix();
 
-	//鼻
+	//口
 	glPushMatrix();
-	glTranslated(model->mouthPoint.x, model->mouthPoint.y - 0.03, model->mouthPoint.z);
-	glRotated(90, 1, 0, 0);//正面方向の調整
-	glScaled(1.2, 1.2, 1.2);
-	glTranslated(-mouth->centerPoint.x, -mouth->centerPoint.y, -mouth->centerPoint.z);
+	glTranslated(model->centerPoint.x, model->centerPoint.y, -model->centerPoint.z);
+	glRotated(-(int)rsAngle_.y, 0, 0, 1);
+	glRotated(-(int)rsAngle_.z * 2.2, 1, 0, 0);
+	glRotated(-(int)rsAngle_.x, 0, 1, 0);
+	glTranslated(model->mouthPoint.x, model->mouthPoint.y, 0);
+	glRotated((int)rsAngle_.y, 0, 0, 1);
+	glRotated((int)rsAngle_.z * 2.2, 1, 0, 0);
+	glRotated((int)rsAngle_.x, 0, 1, 0);
+	glTranslated(-mouth->centerPoint.x, -mouth->centerPoint.y, mouth->centerPoint.z);
 	mouth->RealSenseDraw();
 	glPopMatrix();
-
-	model->Draw();
-
+	
 	glPopMatrix();
 }
 
@@ -355,26 +404,22 @@ void display(void)
 	glViewport(0, 0, WIDTH, HEIGHT);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(30.0, WIDTH / HEIGHT, 0.1, 200.0);
+	gluPerspective(30.0, WIDTH / HEIGHT*1.2f, 0.01, 100.0);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
 	//gluLookAt(0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 	gluLookAt(
-		0.0, 0.0, 1.0,//カメラ位置は固定
+		0.0, 0.2, 1.1,//カメラ位置は固定
 		model->centerPoint.x, model->centerPoint.y, model->centerPoint.z,
 		0, 1, 0);
 	hoge++;
 
 	//座標系(わかりにくいため)
 	glPushMatrix();
-	//drawAxis();
+	drawAxis();
 	glPopMatrix();
 	
-	//テスト用
-	glPushMatrix();		
-	
-	glPopMatrix();
 
 	//オブジェクト描画
 
@@ -574,7 +619,7 @@ void MainGL::SetRightEye(std::vector<Point3f> &points, Point3f center, std::vect
 		
 		//cout << color.at(i).x << " " << color.at(i).y << endl;
 		_y = color.at(i).y * 1.3 - 85;
-		_x = color.at(i).x * 1.3 - 40;
+		_x = color.at(i).x * 1.3 - 58;
 		//printf("%d,%d\n", _x, _y);
 		if (_x>640 || _y > 480 || _x < 0 || _y < 0){
 			
@@ -612,7 +657,7 @@ void MainGL::SetLeftEye(std::vector<Point3f> &points, Point3f center, std::vecto
 
 		//cout << color.at(i).x << " " << color.at(i).y << endl;
 		_y = color.at(i).y * 1.3 - 85;
-		_x = color.at(i).x * 1.3 - 40;
+		_x = color.at(i).x * 1.3 - 58;
 		//printf("%d,%d\n", _x, _y);
 		if (_x>640 || _y > 480 || _x < 0 || _y < 0){
 
@@ -651,7 +696,7 @@ void MainGL::SetNose(std::vector<Point3f> &points, Point3f center, std::vector<c
 
 		//cout << color.at(i).x << " " << color.at(i).y << endl;
 		_y = color.at(i).y * 1.3 - 85;
-		_x = color.at(i).x * 1.3 - 40;
+		_x = color.at(i).x * 1.3 - 58;
 		//printf("%d,%d\n", _x, _y);
 		if (_x>640 || _y > 480 || _x < 0 || _y < 0){
 
@@ -690,7 +735,7 @@ void MainGL::SetMouth(std::vector<Point3f> &points, Point3f center, std::vector<
 
 		//cout << color.at(i).x << " " << color.at(i).y << endl;
 		_y = color.at(i).y * 1.3 - 85;
-		_x = color.at(i).x * 1.3 - 40;
+		_x = color.at(i).x * 1.3 - 58;
 		//printf("%d,%d\n", _x, _y);
 		if (_x>640 || _y > 480 || _x < 0 || _y < 0){
 

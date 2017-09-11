@@ -194,6 +194,10 @@ void MODEL::RealSenseDraw(){
 			glVertexPointer(3, GL_FLOAT, sizeof(Point3f), temp);
 			glColorPointer(3, GL_FLOAT, sizeof(Point3f), tempC);
 			glDrawArrays(GL_POINTS, 0, 1);
+
+			/*printf("temp:%f,%f,%f\n", temp[0], temp[1], temp[2]);
+
+			printf("center:%f,%f,%f\n", centerPoint.x, centerPoint.y, centerPoint.z);*/
 		}
 
 	}
@@ -481,21 +485,21 @@ void MODEL::calcCenter(){
 void MODEL::CalcFacePoint(){
 
 	//Œû‚ÌŒvŽZ
-	mouthPoint.x = minXPoint + ((maxXPoint - minXPoint) / 2);
-	mouthPoint.y = centerPoint.y;
+	mouthPoint.x = 0;
+	mouthPoint.y = (minZPoint - centerPoint.z)*(5.5f / 8.0f);
 	mouthPoint.z = minZPoint + ((maxZPoint - minZPoint)*(2.0 / 9.0));
 	
 	//–Ú‚ÌŒvŽZ
-	rightEyePoint.x = minXPoint + ((maxXPoint - minXPoint) *(1.5 / 5.0));
-	rightEyePoint.y = centerPoint.y;
+	rightEyePoint.x = (minXPoint-centerPoint.x)/2;
+	rightEyePoint.y = (maxYPoint-centerPoint.y)/8;
 	rightEyePoint.z = mouthPoint.z + ((maxZPoint - mouthPoint.z) / 2);
 
-	leftEyePoint.x = maxXPoint - ((maxXPoint - minXPoint) *(1.5 / 5.0));
-	leftEyePoint.y = centerPoint.y;
+	leftEyePoint.x = (maxXPoint - centerPoint.x) / 2;
+	leftEyePoint.y = (maxYPoint - centerPoint.y) / 8;
 	leftEyePoint.z = mouthPoint.z + ((maxZPoint - mouthPoint.z) / 2);
 
 	//•@‚ÌŒvŽZ
-	nosePoint.x = minXPoint + ((maxXPoint - minXPoint) / 2);
-	nosePoint.y = centerPoint.y;
+	nosePoint.x = 0;
+	nosePoint.y = (minZPoint - centerPoint.z) *(2.2f/ 8.0f);
 	nosePoint.z = mouthPoint.z + ((maxZPoint - mouthPoint.z) / 4);
 }
