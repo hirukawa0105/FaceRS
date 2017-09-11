@@ -86,8 +86,9 @@ void FaceTrackingRenderer2D::DrawBitmap(PXCCapture::Sample* sample, bool ir)
 		//			}
 		//		}
 		//	}
-		//}
-
+		////}
+		//cv::Mat re;
+		//cv::resize(camera, re, cv::Size(640, 480));
 		throwGL.SetCameraMap(camera);
 
 	}

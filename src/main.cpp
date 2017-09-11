@@ -291,6 +291,7 @@ INT_PTR CALLBACK MessageLoopThread(HWND dialogWindow, UINT message, WPARAM wPara
 	{ 
 	case WM_INITDIALOG:
 		PopulateDevice(menu1);
+		CheckDlgButton(dialogWindow, IDC_LINE, BST_CHECKED);
 		CheckDlgButton(dialogWindow, IDC_LOCATION, BST_CHECKED);
 		CheckDlgButton(dialogWindow, IDC_SCALE, BST_CHECKED);
 		CheckDlgButton(dialogWindow, IDC_LANDMARK, BST_CHECKED);

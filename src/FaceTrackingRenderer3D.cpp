@@ -188,6 +188,8 @@ void FaceTrackingRenderer3D::DrawBitmap(PXCCapture::Sample* sample, bool ir)
 		bool test=PointInPolygon(Point2(530, 470), temp);
 		cout << test << endl;*/
 
+
+		//printf("%d\n", imageDepthInfo.width);
 		for (int y = 0; y < imageDepthInfo.height; y++)
 		{
 			const PXCPoint3DF32 *verticesRow = vertices + y * strideVertices;
@@ -206,19 +208,11 @@ void FaceTrackingRenderer3D::DrawBitmap(PXCCapture::Sample* sample, bool ir)
 					continue;
 				}
 
-				//一番遠い点を探索
-				if (v.z > highZ){
-					highZ = v.z;
-				}
-				//一番近い点を探索
-				if (v.z<lowZ){
-					lowZ = v.z;
-				}
-				
-
 				double ix = 0, iy = 0;
 				if (ProjectVertex(v, ix, iy))
 				{
+
+					//printf("%d,%d\n", x,ix);
 					pxcBYTE *ptr = m_outputImageData.planes[0];
 					ptr += my_round(iy) * m_outputImageData.pitches[0];
 					ptr += my_round(ix) * 4;
@@ -245,20 +239,28 @@ void FaceTrackingRenderer3D::DrawBitmap(PXCCapture::Sample* sample, bool ir)
 					if (PointInPolygon(Point2(ix, iy), rightEyeList)){
 						temp.x = v.x / 1000; temp.y = v.y / 1000; temp.z = v.z / 1000;
 						rightEyeDepth.push_back(temp);
+						rightEyeColor.push_back(cv::Point2f(x, y));
 						start = true;
 					}
+
+					/*temp.x = v.x / 1000; temp.y = v.y / 1000; temp.z = v.z / 1000;
+					rightEyeDepth.push_back(temp);
+					rightEyeColor.push_back(cv::Point2f(x, y));*/
 
 					//左目depthの受け渡し
 					if (PointInPolygon(Point2(ix, iy), leftEyeList)){
 						temp.x = v.x / 1000; temp.y = v.y / 1000; temp.z = v.z / 1000;
 						leftEyeDepth.push_back(temp);
+						leftEyeColor.push_back(cv::Point2f(x, y));
 						start = true;
 					}
 
 					//鼻depthの受け渡し
 					if (PointInPolygon(Point2(ix, iy), noseList)){
+
 						temp.x = v.x / 1000; temp.y = v.y / 1000; temp.z = v.z / 1000;
 						noseDepth.push_back(temp);
+						noseColor.push_back(cv::Point2f(x, y));
 						start = true;
 					}
 
@@ -266,6 +268,7 @@ void FaceTrackingRenderer3D::DrawBitmap(PXCCapture::Sample* sample, bool ir)
 					if (PointInPolygon(Point2(ix, iy), mouthList)){
 						temp.x = v.x / 1000; temp.y = v.y / 1000; temp.z = v.z / 1000;
 						mouthDepth.push_back(temp);
+						mouthColor.push_back(cv::Point2f(x, y));
 						start = true;
 					}
 				}
@@ -274,10 +277,10 @@ void FaceTrackingRenderer3D::DrawBitmap(PXCCapture::Sample* sample, bool ir)
 			}
 		}
 
-		throwGL.SetRightEye(rightEyeDepth,rightEyeCenter);
-		throwGL.SetLeftEye(leftEyeDepth, leftEyeCenter);
-		throwGL.SetNose(noseDepth, noseCenter);
-		throwGL.SetMouth(mouthDepth, mouthCenter);
+		throwGL.SetRightEye(rightEyeDepth,rightEyeCenter,rightEyeColor);
+		throwGL.SetLeftEye(leftEyeDepth, leftEyeCenter, leftEyeColor);
+		throwGL.SetNose(noseDepth, noseCenter, noseColor);
+		throwGL.SetMouth(mouthDepth, mouthCenter, mouthColor);
 
 		if (vertices) delete[] vertices;
 
@@ -494,6 +497,32 @@ void FaceTrackingRenderer3D::DrawLine(PXCFaceData::Face* trackedFace){
 			}
 		}
 	}
+
+	Point2 rightEyeGravity = CalcGravity(rightEyeList);
+	Point2 leftEyeGravity = CalcGravity(leftEyeList);
+	Point2 noseGravity = CalcGravity(noseList);
+	Point2 mouthGravity = CalcGravity(mouthList);
+	Point2 temp;
+
+	for (int i = 0; i < rightEyeList.size(); ++i){
+		
+		temp.x =rightEyeList.at(i).x - rightEyeGravity.x;
+		temp.y = rightEyeList.at(i).y - rightEyeGravity.y;
+		//temp = CalcUnitVecRs2D(temp);
+		rightEyeList.at(i).x += temp.x;
+		rightEyeList.at(i).y += temp.y;
+	}
+
+	for (int i = 0; i < leftEyeList.size(); ++i){
+
+		temp.x = leftEyeList.at(i).x - leftEyeGravity.x;
+		temp.y = leftEyeList.at(i).y - leftEyeGravity.y;
+		//temp = CalcUnitVecRs2D(temp);
+		leftEyeList.at(i).x += temp.x;
+		leftEyeList.at(i).y += temp.y;
+	}
+
+
 
 	rightEyeCenter.x = points[76].world.x / 1000;
 	rightEyeCenter.y = points[76].world.y / 1000;
@@ -857,6 +886,12 @@ float FaceTrackingRenderer3D::VectoScalarRs(Point3f vec){
 	return sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
 }
 
+float FaceTrackingRenderer3D::VectoScalarRs2D(Point2 vec){
+
+	return sqrt(vec.x * vec.x + vec.y * vec.y);
+}
+
+
 //単位ベクトルへ変換
 Point3f FaceTrackingRenderer3D::CalcUnitVecRs(Point3f vec){
 
@@ -867,3 +902,25 @@ Point3f FaceTrackingRenderer3D::CalcUnitVecRs(Point3f vec){
 	return temp;
 }
 
+Point2 FaceTrackingRenderer3D::CalcUnitVecRs2D(Point2 vec){
+
+	Point2 temp;
+	temp.x = vec.x / VectoScalarRs2D(vec);
+	temp.y = vec.y / VectoScalarRs2D(vec);
+	return temp;
+}
+//重心計算
+Point2 FaceTrackingRenderer3D::CalcGravity(std::vector<Point2> points){
+
+	Point2 temp;
+
+	for (int i = 0; i < points.size();++i){
+		temp.x += points.at(i).x;
+		temp.y += points.at(i).y;
+	}
+
+	temp.x = temp.x / points.size();
+	temp.y = temp.y / points.size();
+
+	return temp;
+}

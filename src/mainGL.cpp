@@ -47,7 +47,13 @@ Point3f glYAxis(0, 1, 0);
 Point3f glZAxis(0, 0, 1);
 
 //RealSenseのカメラ画像
-cv::Mat cameraMap = cv::Mat::zeros(cv::Size(160, 100), CV_8U);
+cv::Mat cameraMap = cv::Mat::zeros(cv::Size(640, 480), CV_8U);
+cv::vector<Point3f> rightEyeColor;
+cv::vector<Point3f> leftEyeColor;
+cv::vector<Point3f> noseColor;
+cv::vector<Point3f> mouthColor;
+
+bool enableChangeMatrix;
 
 // メッシュの列数と行数
 const auto slices(16), stacks(12);
@@ -277,7 +283,7 @@ void drawObject(){
 		//cout <<"Axis:"<< rsAxis[1].x << " " << rsAxis[1].y << " " << rsAxis[1].z << endl;
 	}
 
-	if (hoge % 3 == 0){//1frame毎に回転させると挙動不審な動きをするため間隔をあけて更新
+	if (hoge % 1 == 0){//1frame毎に回転させると挙動不審な動きをするため間隔をあけて更新
 
 		rsAngle_.x = rsAngle.x;
 		rsAngle_.y = rsAngle.y;
@@ -302,26 +308,26 @@ void drawObject(){
 
 	//右目描画
 	glPushMatrix();
-	glTranslated(model->rightEyePoint.x, model->rightEyePoint.y - 0.01, model->rightEyePoint.z);
-	glRotated(60, 1, 0, 0);//正面方向の調整
-	glScaled(1.2, 1.2, 1.2);
+	glTranslated(model->rightEyePoint.x, model->rightEyePoint.y - 0.03, model->rightEyePoint.z);
+	glRotated(90, 1, 0, 0);//正面方向の調整
+	//glScaled(1.2, 1.2, 1.2);
 	glTranslated(-rightEye->centerPoint.x, -rightEye->centerPoint.y, -rightEye->centerPoint.z);
 	rightEye->RealSenseDraw();
 	glPopMatrix();
 
 	//左目
 	glPushMatrix();
-	glTranslated(model->leftEyePoint.x, model->leftEyePoint.y - 0.01, model->leftEyePoint.z);
-	glRotated(60, 1, 0, 0);//正面方向の調整
-	glScaled(1.2, 1.2, 1.2);
+	glTranslated(model->leftEyePoint.x, model->leftEyePoint.y - 0.03, model->leftEyePoint.z);
+	glRotated(90, 1, 0, 0);//正面方向の調整
+	//glScaled(1.2, 1.2, 1.2);
 	glTranslated(-leftEye->centerPoint.x, -leftEye->centerPoint.y, -leftEye->centerPoint.z);
 	leftEye->RealSenseDraw();
 	glPopMatrix();
 
 	//鼻
 	glPushMatrix();
-	glTranslated(model->nosePoint.x, model->nosePoint.y - 0.02, model->nosePoint.z);
-	glRotated(70, 1, 0, 0);//正面方向の調整
+	glTranslated(model->nosePoint.x, model->nosePoint.y - 0.03, model->nosePoint.z);
+	glRotated(90, 1, 0, 0);//正面方向の調整
 	glScaled(1.2, 1.2, 1.2);
 	glTranslated(-nose->centerPoint.x, -nose->centerPoint.y, -nose->centerPoint.z);
 	nose->RealSenseDraw();
@@ -329,21 +335,21 @@ void drawObject(){
 
 	//鼻
 	glPushMatrix();
-	glTranslated(model->mouthPoint.x, model->mouthPoint.y - 0.02, model->mouthPoint.z);
-	glRotated(70, 1, 0, 0);//正面方向の調整
+	glTranslated(model->mouthPoint.x, model->mouthPoint.y - 0.03, model->mouthPoint.z);
+	glRotated(90, 1, 0, 0);//正面方向の調整
 	glScaled(1.2, 1.2, 1.2);
 	glTranslated(-mouth->centerPoint.x, -mouth->centerPoint.y, -mouth->centerPoint.z);
 	mouth->RealSenseDraw();
 	glPopMatrix();
 
-	//model->Draw();
+	model->Draw();
 
 	glPopMatrix();
 }
 
 void display(void)
 {
-
+	enableChangeMatrix = false;
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glViewport(0, 0, WIDTH, HEIGHT);
@@ -355,7 +361,7 @@ void display(void)
 
 	//gluLookAt(0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 	gluLookAt(
-		0.0, 0.0, 1.4,//カメラ位置は固定
+		0.0, 0.0, 1.0,//カメラ位置は固定
 		model->centerPoint.x, model->centerPoint.y, model->centerPoint.z,
 		0, 1, 0);
 	hoge++;
@@ -366,39 +372,20 @@ void display(void)
 	glPopMatrix();
 	
 	//テスト用
-	glPushMatrix();
-	//model->Draw();
-
-	//if (cameraMap)
-	//{
-	//	HDC dc3;
-	//	SetBkMode(dc3, TRANSPARENT);
-	//	SelectObject(dc3, cameraMap);
-	//	DeleteObject(cameraMap);
-	//	COLORREF color = GetPixel(dc3, 0, 0);
-	//	int R = GetRValue(color);//赤情報取り出し
-	//	int G = GetGValue(color);//緑情報取り出し
-	//	int B = GetBValue(color);//青情報取り出し
-
-	//	printf("%d,%d,%d\n", R, G, B);
-
-	//}
-	//printf("%f,%f,%f\n", cameraMap[0][0][0], cameraMap[0][0][1], cameraMap[0][0][2]);
-	cv::imshow("aaa", cameraMap);
-	cv::waitKey(1);
-
-	
-
-		
+	glPushMatrix();		
 	
 	glPopMatrix();
 
 	//オブジェクト描画
+
 	drawObject();
+	
+	
 
 	
 	//std::cout << " " << -rightEye->centerPoint.x << " " << -rightEye->centerPoint.y << " " << -rightEye->centerPoint.z <<endl;
 	glutSwapBuffers();
+	enableChangeMatrix = true;
 }
 void idle(void)
 {
@@ -572,40 +559,156 @@ int MainGL::GLmain()
 	return 0;
 }
 
-void MainGL::SetRightEye(std::vector<Point3f> &points,Point3f center){
+void MainGL::SetRightEye(std::vector<Point3f> &points, Point3f center, std::vector<cv::Point2i> &color){
 
-	rightEye->VertexLoad(points);
+	if (points.size() != color.size()){
+		printf("waring\n");
+	}
+
+	rightEyeColor.clear();
+	Point3f temp2;
+	int _y;
+	int _x;
+
+	for (int i = 0; i < color.size();++i){
+		
+		//cout << color.at(i).x << " " << color.at(i).y << endl;
+		_y = color.at(i).y * 1.3 - 85;
+		_x = color.at(i).x * 1.3 - 40;
+		//printf("%d,%d\n", _x, _y);
+		if (_x>640 || _y > 480 || _x < 0 || _y < 0){
+			
+			temp2.x = 255; temp2.y = 255; temp2.z = 0;
+			rightEyeColor.push_back(temp2);
+			continue;
+		}
+
+		temp2.x = cameraMap.data[_y * cameraMap.step + _x *cameraMap.elemSize() + 2];
+		temp2.y = cameraMap.data[_y * cameraMap.step + _x *cameraMap.elemSize() + 1];
+		temp2.z = cameraMap.data[_y * cameraMap.step + _x *cameraMap.elemSize() + 0];
+		rightEyeColor.push_back(temp2);
+	}
+
+	rightEye->VertexLoad(points,rightEyeColor);
 	points.clear();
+	color.clear();
 	rightEye->centerPoint.x = center.x;
 	rightEye->centerPoint.y = center.y;
 	rightEye->centerPoint.z = center.z;
 
 }
 
-void MainGL::SetLeftEye(std::vector<Point3f> &points, Point3f center){
+void MainGL::SetLeftEye(std::vector<Point3f> &points, Point3f center, std::vector<cv::Point2i> &color){
 
-	leftEye->VertexLoad(points);
+	if (points.size() != color.size()){
+		printf("waring\n");
+	}
+
+	leftEyeColor.clear();
+	Point3f temp2;
+	int _y;
+	int _x;
+	for (int i = 0; i < color.size(); ++i){
+
+		//cout << color.at(i).x << " " << color.at(i).y << endl;
+		_y = color.at(i).y * 1.3 - 85;
+		_x = color.at(i).x * 1.3 - 40;
+		//printf("%d,%d\n", _x, _y);
+		if (_x>640 || _y > 480 || _x < 0 || _y < 0){
+
+			temp2.x = 255; temp2.y = 255; temp2.z = 0;
+			leftEyeColor.push_back(temp2);
+			continue;
+		}
+		//cout << color.at(i).x << " " << color.at(i).y << endl;
+		temp2.x = cameraMap.data[_y  * cameraMap.step + _x *cameraMap.elemSize() + 2];
+		temp2.y = cameraMap.data[_y  * cameraMap.step + _x  *cameraMap.elemSize() + 1];
+		temp2.z = cameraMap.data[_y  * cameraMap.step + _x  *cameraMap.elemSize() + 0];
+		leftEyeColor.push_back(temp2);
+	}
+
+
+	leftEye->VertexLoad(points, leftEyeColor);
 	points.clear();
+	color.clear();
 	leftEye->centerPoint.x = center.x;
 	leftEye->centerPoint.y = center.y;
 	leftEye->centerPoint.z = center.z;
 
 }
 
-void MainGL::SetNose(std::vector<Point3f> &points, Point3f center){
+void MainGL::SetNose(std::vector<Point3f> &points, Point3f center, std::vector<cv::Point2i> &color){
 
-	nose->VertexLoad(points);
+	if (points.size() != color.size()){
+		printf("waring\n");
+	}
+
+	noseColor.clear();
+	Point3f temp2;
+	int _y;
+	int _x;
+	for (int i = 0; i < color.size(); ++i){
+
+		//cout << color.at(i).x << " " << color.at(i).y << endl;
+		_y = color.at(i).y * 1.3 - 85;
+		_x = color.at(i).x * 1.3 - 40;
+		//printf("%d,%d\n", _x, _y);
+		if (_x>640 || _y > 480 || _x < 0 || _y < 0){
+
+			temp2.x = 255; temp2.y = 255; temp2.z = 0;
+			noseColor.push_back(temp2);
+			continue;
+		}
+		//cout << color.at(i).x << " " << color.at(i).y << endl;
+		temp2.x = cameraMap.data[_y  * cameraMap.step + _x *cameraMap.elemSize() + 2];
+		temp2.y = cameraMap.data[_y  * cameraMap.step + _x  *cameraMap.elemSize() + 1];
+		temp2.z = cameraMap.data[_y  * cameraMap.step + _x  *cameraMap.elemSize() + 0];
+		noseColor.push_back(temp2);
+	}
+
+
+	nose->VertexLoad(points, noseColor);
 	points.clear();
+	color.clear();
 	nose->centerPoint.x = center.x;
 	nose->centerPoint.y = center.y;
 	nose->centerPoint.z = center.z;
 
 }
 
-void MainGL::SetMouth(std::vector<Point3f> &points, Point3f center){
+void MainGL::SetMouth(std::vector<Point3f> &points, Point3f center, std::vector<cv::Point2i> &color){
 
-	mouth->VertexLoad(points);
+	if (points.size() != color.size()){
+		printf("waring\n");
+	}
+
+	mouthColor.clear();
+	Point3f temp2;
+	int _y;
+	int _x;
+	for (int i = 0; i < color.size(); ++i){
+
+		//cout << color.at(i).x << " " << color.at(i).y << endl;
+		_y = color.at(i).y * 1.3 - 85;
+		_x = color.at(i).x * 1.3 - 40;
+		//printf("%d,%d\n", _x, _y);
+		if (_x>640 || _y > 480 || _x < 0 || _y < 0){
+
+			temp2.x = 255; temp2.y = 255; temp2.z = 0;
+			mouthColor.push_back(temp2);
+			continue;
+		}
+		//cout << color.at(i).x << " " << color.at(i).y << endl;
+		temp2.x = cameraMap.data[_y * cameraMap.step + _x *cameraMap.elemSize() + 2];
+		temp2.y = cameraMap.data[_y *cameraMap.step + _x *cameraMap.elemSize() + 1];
+		temp2.z = cameraMap.data[_y * cameraMap.step + _x *cameraMap.elemSize() + 0];
+		mouthColor.push_back(temp2);
+	}
+
+
+	mouth->VertexLoad(points, mouthColor);
 	points.clear();
+	color.clear();
 	mouth->centerPoint.x = center.x;
 	mouth->centerPoint.y = center.y;
 	mouth->centerPoint.z = center.z;
@@ -836,3 +939,4 @@ void Special(int key, int x, int y)
 		break;
 	}
 }
+

@@ -35,7 +35,10 @@ private:
 	void DrawPose(PXCFaceData::Face* trackedFace);
 	Point3f CalcCrossRs(Point3f vec1, Point3f vec2);
 	Point3f CalcUnitVecRs(Point3f vec);
+	Point2 CalcUnitVecRs2D(Point2 vec);
 	float VectoScalarRs(Point3f vec);
+	float VectoScalarRs2D(Point2 vec);
+	Point2 CalcGravity(std::vector<Point2> points);
 
 	PXCSession* m_session;
 	PXCImage::ImageInfo m_outputImageInfo;
@@ -48,12 +51,16 @@ private:
 	std::vector<Point2> mouthList;
 
 	std::vector<Point3f> rightEyeDepth;
+	std::vector<cv::Point2i> rightEyeColor;
 	Point3f rightEyeCenter;
 	std::vector<Point3f> leftEyeDepth;
+	std::vector<cv::Point2i> leftEyeColor;
 	Point3f leftEyeCenter;
 	std::vector<Point3f> noseDepth;
+	std::vector<cv::Point2i> noseColor;
 	Point3f noseCenter;
 	std::vector<Point3f> mouthDepth;
+	std::vector<cv::Point2i> mouthColor;
 	Point3f mouthCenter;
 
 	MainGL throwGL;

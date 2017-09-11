@@ -84,7 +84,7 @@ public:
 	MODEL();
 	MODEL(char* FileName);//コンストラクタ
 	bool OBJ_Load(char* FileName);//ロード
-	bool VertexLoad(std::vector<Point3f> &points);//点群ロード
+	bool VertexLoad(std::vector<Point3f> &points, vector<Point3f> &color);//点群ロード
 	void Draw();
 	void RealSenseDraw();
 	vector <Vector3f> objVertex;//3次元点
@@ -92,6 +92,9 @@ public:
 	void calcCenter();
 	void CalcFacePoint();
 	std::vector<Point3f> rsVertex;
+	std::vector<Point3f> rsVertexCash;
+	std::vector<Point3f> rsVertexColor;
+	std::vector<Point3f> rsVertexColorCash;
 	// カラー配列情報
 
 	float minXPoint = 9999999;
@@ -105,6 +108,9 @@ public:
 	Vector3f leftEyePoint;
 	Vector3f nosePoint;
 	Vector3f mouthPoint;
+	
+	bool changingValue;
+	bool readingValue;
 
 };
 MODEL::MODEL(){
@@ -162,23 +168,40 @@ void MODEL::Draw(){
 
 void MODEL::RealSenseDraw(){
 
-	glEnableClientState(GL_VERTEX_ARRAY);
-	//glEnableClientState(GL_COLOR_ARRAY);
-
+	changingValue = true;
 	GLfloat temp[3];
+	GLfloat tempC[3];
 
-	for (int i=0; i < rsVertex.size(); ++i){
-		temp[0] = rsVertex.at(i).x; temp[1] = rsVertex.at(i).y; temp[2] = rsVertex.at(i).z;
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_COLOR_ARRAY);
 
-		//printf("%f\n", temp[1]);
-		glVertexPointer(3, GL_FLOAT, sizeof(Point3f), temp);
-		//glColorPointer(4, GL_FLOAT, sizeof(Tri), &Material[i].Tridata[0].TriColor);
-		glDrawArrays(GL_POINTS,0, 1);
+
+	if (readingValue){
+		for (int i = 0; i < rsVertexCash.size(); ++i){
+			//printf("%d,%d\n", rsVertex.size(), rsVertexColor.size());
+			temp[0] = rsVertexCash.at(i).x; temp[1] = rsVertexCash.at(i).y; temp[2] = rsVertexCash.at(i).z;
+			tempC[0] = rsVertexColorCash.at(i).x / 255.0f; tempC[1] = rsVertexColorCash.at(i).y / 255.0f; tempC[2] = rsVertexColorCash.at(i).z / 255.0f;
+			glVertexPointer(3, GL_FLOAT, sizeof(Point3f), temp);
+			glColorPointer(3, GL_FLOAT, sizeof(Point3f), tempC);
+			glDrawArrays(GL_POINTS, 0, 1);
+		}
 	}
+	else{
+		for (int i = 0; i < rsVertex.size(); ++i){
+			//printf("%d,%d\n", rsVertex.size(), rsVertexColor.size());
+			temp[0] = rsVertex.at(i).x; temp[1] = rsVertex.at(i).y; temp[2] = rsVertex.at(i).z;
+			tempC[0] = rsVertexColor.at(i).x / 255.0f; tempC[1] = rsVertexColor.at(i).y / 255.0f; tempC[2] = rsVertexColor.at(i).z / 255.0f;
+			glVertexPointer(3, GL_FLOAT, sizeof(Point3f), temp);
+			glColorPointer(3, GL_FLOAT, sizeof(Point3f), tempC);
+			glDrawArrays(GL_POINTS, 0, 1);
+		}
 
+	}
+		
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisable(GL_TEXTURE_2D);
+	changingValue = false;
 }
 
 //OBJファイル読み込み
@@ -320,14 +343,30 @@ bool MODEL::OBJ_Load(char* FileName){
 	return true;
 }
 
-bool MODEL::VertexLoad(vector<Point3f> &points){
+bool MODEL::VertexLoad(vector<Point3f> &points, vector<Point3f> &color){
 	
+	if (changingValue){
+
+		rsVertexCash.clear();
+		rsVertexColorCash.clear();
+		for (int i = 0; i < points.size(); ++i){
+			rsVertex.push_back(points.at(i));
+			rsVertexColor.push_back(color.at(i));
+		}
+
+		return false;
+	}
+	
+	readingValue = true;
 	rsVertex.clear();
+	rsVertexColor.clear();
 
 	for (int i = 0; i < points.size();++i){
 		rsVertex.push_back(points.at(i));
+		rsVertexColor.push_back(color.at(i));
 	}
 
+	readingValue = false;
 	return true;
 }
 
